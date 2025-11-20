@@ -1,10 +1,100 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Pelis - UAGRO</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Conectamos el CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
+    <header class="site-header">
+        <div class="logo-area">
+            <span class="logo-icon">🦅</span>
+            <span class="logo-text">Pelis - UAGRO</span>
+        </div>
+        <nav class="main-nav">
+            <a href="#" class="nav-link active">Inicio</a>
+            <a href="#" class="nav-link">Películas</a>
+            <a href="#" class="nav-link">Series</a>
+            <a href="#" class="nav-link">Mi cuenta</a>
+        </nav>
+        <div class="user-area">
+            <button class="btn-login">Iniciar sesión</button>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <!-- HERO (película destacada) -->
+        <section class="hero">
+            <div class="hero-overlay"></div>
+            <div class="hero-content">
+                <h1 class="hero-title">Película Destacada</h1>
+                <p class="hero-description">
+                    Una breve descripción de la película destacada. Aquí podrías poner
+                    el género, año y una sinopsis corta.
+                </p>
+                <div class="hero-buttons">
+                    <button class="btn-primary">▶ Reproducir</button>
+                    <button class="btn-secondary">ℹ Más información</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- FILA DE PELÍCULAS -->
+        <section class="row">
+            <h2 class="row-title">Tendencias</h2>
+            <div class="row-cards">
+                <article class="movie-card">
+                    <div class="movie-cover"></div>
+                    <h3 class="movie-title">Pelicula 1</h3>
+                    <p class="movie-meta">Acción • 2024</p>
+                </article>
+                <article class="movie-card">
+                    <div class="movie-cover"></div>
+                    <h3 class="movie-title">Pelicula 2</h3>
+                    <p class="movie-meta">Drama • 2023</p>
+                </article>
+                <article class="movie-card">
+                    <div class="movie-cover"></div>
+                    <h3 class="movie-title">Pelicula 3</h3>
+                    <p class="movie-meta">Comedia • 2022</p>
+                </article>
+                <article class="movie-card">
+                    <div class="movie-cover"></div>
+                    <h3 class="movie-title">Pelicula 4</h3>
+                    <p class="movie-meta">Terror • 2021</p>
+                </article>
+            </div>
+        </section>
+
+        <!-- OTRA FILA -->
+        <section class="row">
+            <h2 class="row-title">Recomendadas para ti</h2>
+            <div class="row-cards">
+                <article class="movie-card">
+                    <div class="movie-cover"></div>
+                    <h3 class="movie-title">Pelicula A</h3>
+                    <p class="movie-meta">Sci-Fi • 2020</p>
+                </article>
+                <article class="movie-card">
+                    <div class="movie-cover"></div>
+                    <h3 class="movie-title">Pelicula B</h3>
+                    <p class="movie-meta">Romance • 2019</p>
+                </article>
+                <article class="movie-card">
+                    <div class="movie-cover"></div>
+                    <h3 class="movie-title">Pelicula C</h3>
+                    <p class="movie-meta">Animación • 2018</p>
+                </article>
+                <article class="movie-card">
+                    <div class="movie-cover"></div>
+                    <h3 class="movie-title">Pelicula D</h3>
+                    <p class="movie-meta">Acción • 2017</p>
+                </article>
+            </div>
+        </section>
+    </main>
 
 </body>
 </html>
