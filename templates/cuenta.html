@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Mi cuenta - Pelis - Uagro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+<header class="site-header">
+    <div class="logo-area">
+        <span class="logo-icon">🦅</span>
+        <span class="logo-text">Pelis - UAGRO</span>
+    </div>
+    <nav class="main-nav">
+        <a href="{{ url_for('home') }}" class="nav-link">Inicio</a>
+        <a href="{{ url_for('peliculas') }}" class="nav-link">Películas</a>
+        <a href="{{ url_for('series') }}" class="nav-link">Series</a>
+        <a href="{{ url_for('cuenta') }}" class="nav-link active">Mi cuenta</a>
+    </nav>
+    <div class="user-area">
+        <button class="btn-login">Iniciar sesión</button>
+    </div>
+</header>
+
+<main class="main-content">
+    <h1 class="row-title">Mi cuenta</h1>
+    <p class="hero-description">
+        Aquí gestionaremos los datos del usuario, sus rentas, etc.
+        (Más adelante conectaremos esta página con el sistema de usuarios.)
+    </p>
+</main>
+
+</body>
+</html>

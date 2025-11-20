@@ -13,12 +13,14 @@
             <span class="logo-icon">🦅</span>
             <span class="logo-text">Pelis - UAGRO</span>
         </div>
+
         <nav class="main-nav">
-            <a href="#" class="nav-link active">Inicio</a>
-            <a href="#" class="nav-link">Películas</a>
-            <a href="#" class="nav-link">Series</a>
-            <a href="#" class="nav-link">Mi cuenta</a>
+            <a href="{{ url_for('home') }}" class="nav-link active">Inicio</a>
+            <a href="{{ url_for('peliculas') }}" class="nav-link">Películas</a>
+            <a href="{{ url_for('series') }}" class="nav-link">Series</a>
+            <a href="{{ url_for('cuenta') }}" class="nav-link">Mi cuenta</a>
         </nav>
+
         <div class="user-area">
             <button class="btn-login">Iniciar sesión</button>
         </div>

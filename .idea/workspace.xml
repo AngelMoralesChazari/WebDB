@@ -5,8 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ede0590d-988f-4355-be99-a7223e8db87c" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/db.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/Peliculas.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/Series.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/cuenta.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/styles.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/index.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -18,9 +22,9 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Flask Main" />
-        <option value="Python Script" />
-        <option value="HTML File" />
         <option value="CSS File" />
+        <option value="HTML File" />
+        <option value="Python Script" />
       </list>
     </option>
   </component>
@@ -112,7 +116,7 @@
       <workItem from="1762990075198" duration="344000" />
       <workItem from="1763603614111" duration="597000" />
       <workItem from="1763606121133" duration="665000" />
-      <workItem from="1763673921282" duration="2940000" />
+      <workItem from="1763673921282" duration="5271000" />
     </task>
     <servers />
   </component>
@@ -120,6 +124,6 @@
     <option name="version" value="3" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/WebBD$WebBD.coverage" NAME="WebBD Coverage Results" MODIFIED="1763677682311" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/WebBD$WebBD.coverage" NAME="WebBD Coverage Results" MODIFIED="1763680321921" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

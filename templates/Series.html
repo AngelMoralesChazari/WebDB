@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Series - Pelis - UAGRO</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+<header class="site-header">
+    <div class="logo-area">
+        <span class="logo-icon">🦅</span>
+        <span class="logo-text">Pelis - UAGRO</span>
+    </div>
+    <nav class="main-nav">
+        <a href="{{ url_for('home') }}" class="nav-link">Inicio</a>
+        <a href="{{ url_for('peliculas') }}" class="nav-link">Películas</a>
+        <a href="{{ url_for('series') }}" class="nav-link active">Series</a>
+        <a href="{{ url_for('cuenta') }}" class="nav-link">Mi cuenta</a>
+    </nav>
+    <div class="user-area">
+        <button class="btn-login">Iniciar sesión</button>
+    </div>
+</header>
+
+<main class="main-content">
+    <h1 class="row-title">Series</h1>
+    <p class="hero-description">
+        Aquí mostraremos las series disponibles.
+        (Después traeremos estos datos desde la base de datos.)
+    </p>
+</main>
+
+</body>
+</html>
