@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Películas - Pelis - UAGRO</title>
+    <title>Pelis - UAGRO | Películas</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
@@ -26,10 +26,34 @@
 <main class="main-content">
     <h1 class="row-title">Películas</h1>
     <p class="hero-description">
-        Aquí listaremos todas las películas disponibles en el sistema.
-        (Más adelante lo conectaremos a la base de datos.)
+        Estas películas vienen directamente de la base de datos <strong>Movies.dbo.mymoviedb</strong>.
     </p>
-</main>
 
+    <section class="row" style="margin-top: 20px;">
+        <h2 class="row-title">Catálogo</h2>
+        <div class="row-cards">
+            {% for peli in peliculas %}
+                <article class="movie-card">
+                    <div class="movie-cover"
+                         style="
+                         {% if peli.poster %}
+                             background-image: url('{{ peli.poster }}');
+                             background-size: cover;
+                             background-position: center;
+                         {% endif %}
+                         ">
+                    </div>
+                    <h3 class="movie-title">{{ peli.titulo }}</h3>
+                    <p class="movie-meta">
+                        {{ peli.genero }} • {{ peli.fecha }}<br>
+                        ⭐ {{ peli.promedio }} ({{ peli.votos }} votos)
+                    </p>
+                </article>
+            {% else %}
+                <p>No hay películas para mostrar.</p>
+            {% endfor %}
+        </div>
+    </section>
+</main>
 </body>
 </html>

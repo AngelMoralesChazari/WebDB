@@ -1,5 +1,6 @@
 import pyodbc
 
+
 def get_connection():
     """
     Crea y retorna una conexión a SQL Server.
@@ -8,9 +9,9 @@ def get_connection():
     try:
         conn = pyodbc.connect(
             'DRIVER={SQL Server};'
-            'SERVER=ANGEL;'  # o .\SQLEXPRESS si usas SQL Server Express
+            'SERVER=ANGEL;'
             'DATABASE=Movies;'
-            'Trusted_Connection=yes;'  # Autenticación de Windows
+            'Trusted_Connection=yes;'
         )
         return conn
     except Exception as e:
