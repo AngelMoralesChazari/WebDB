@@ -1,14 +1,13 @@
-print(">>> Cargando app.py de Pelis - Uagro")
-
 from flask import Flask, render_template
-from models import obtener_peliculas
+from models import obtener_peliculas, obtener_pelicula_aleatoria  # <-- agregar aquí
 
 app = Flask(__name__)
 
 
 @app.route("/")
 def home():
-    return render_template("index.html")
+    pelicula_destacada = obtener_pelicula_aleatoria()
+    return render_template("index.html", destacada=pelicula_destacada)
 
 
 @app.route("/peliculas")

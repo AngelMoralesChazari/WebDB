@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <title>Pelis - UAGRO</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Conectamos el CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
+
 <body>
     <header class="site-header">
         <div class="logo-area">
@@ -27,23 +28,36 @@
     </header>
 
     <main class="main-content">
-        <!-- HERO (película destacada) -->
-        <section class="hero">
+        <section class="hero" {% if destacada and destacada.poster %} style="
+            background-image:
+                linear-gradient(to right, rgba(2,6,23,0.95), rgba(2,6,23,0.6), transparent),
+                url('{{ destacada.poster }}');
+            background-size: cover;
+            background-position: center top;
+         " {% endif %}>
             <div class="hero-overlay"></div>
             <div class="hero-content">
-                <h1 class="hero-title">Película Destacada</h1>
+                {% if destacada %}
+                <h1 class="hero-title">{{ destacada.titulo }}</h1>
                 <p class="hero-description">
-                    Una breve descripción de la película destacada. Aquí podrías poner
-                    el género, año y una sinopsis corta.
+                    <strong>{{ destacada.genero }}</strong> • {{ destacada.fecha }}<br>
+                    ⭐ {{ destacada.promedio }}/10 ({{ destacada.votos }} votos)<br><br>
+                    {{ destacada.overview[:200] }}{% if destacada.overview|length > 200 %}...{% endif %}
                 </p>
                 <div class="hero-buttons">
                     <button class="btn-primary">▶ Reproducir</button>
                     <button class="btn-secondary">ℹ Más información</button>
                 </div>
+                {% else %}
+                <h1 class="hero-title">Película Destacada</h1>
+                <p class="hero-description">
+                    No se pudo cargar la película destacada.
+                </p>
+                {% endif %}
             </div>
         </section>
 
-        <!-- FILA DE PELÍCULAS -->
+        <!-- FILA DE PELÍCULAS (de momento estáticas, luego las conectamos también) -->
         <section class="row">
             <h2 class="row-title">Tendencias</h2>
             <div class="row-cards">
@@ -99,4 +113,5 @@
     </main>
 
 </body>
+
 </html>

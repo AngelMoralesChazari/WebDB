@@ -123,7 +123,6 @@ body {
   content: "";
   position: absolute;
   inset: 0;
-  background: url("https://picsum.photos/1200/400?blur=3") center/cover no-repeat;
   opacity: 0.35;
 }
 
