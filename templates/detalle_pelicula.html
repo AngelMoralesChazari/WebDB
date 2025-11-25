@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ pelicula.titulo }} | Pelis - UAGRO</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+<header class="site-header">
+    <div class="logo-area">
+        <span class="logo-icon">🦅</span>
+        <span class="logo-text">Pelis - UAGRO</span>
+    </div>
+
+    <nav class="main-nav">
+        <a href="{{ url_for('home') }}" class="nav-link">Inicio</a>
+        <a href="{{ url_for('peliculas') }}" class="nav-link">Películas</a>
+        <a href="{{ url_for('series') }}" class="nav-link">Series</a>
+        <a href="{{ url_for('cuenta') }}" class="nav-link">Mi cuenta</a>
+    </nav>
+
+    <div class="user-area">
+        <button class="btn-login">Iniciar sesión</button>
+    </div>
+</header>
+
+<main class="main-content detalle-page">
+    <section class="detalle-hero"
+             {% if pelicula.poster %}
+             style="
+                background-image:
+                    linear-gradient(to right, rgba(2,6,23,0.95), rgba(2,6,23,0.6), transparent),
+                    url('{{ pelicula.poster }}');
+                background-size: cover;
+                background-position: center top;
+             "
+             {% endif %}>
+        <div class="detalle-overlay"></div>
+        <div class="detalle-content">
+            <h1 class="hero-title">{{ pelicula.titulo }}</h1>
+            <p class="hero-description">
+                <strong>{{ pelicula.genero }}</strong> • {{ pelicula.fecha }}<br>
+                ⭐ {{ pelicula.promedio|round(1) }}/10 ({{ pelicula.votos }} votos)<br>
+                Idioma original: {{ pelicula.idioma }}
+            </p>
+            <div class="hero-buttons">
+                <button class="btn-primary">▶ Reproducir</button>
+                <button class="btn-secondary" onclick="history.back()">← Volver</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="detalle-info">
+        <h2>Sinopsis</h2>
+        <p>{{ pelicula.overview }}</p>
+    </section>
+</main>
+</body>
+</html>

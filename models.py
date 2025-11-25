@@ -157,3 +157,52 @@ def obtener_peliculas_aleatorias(limit = 10):
         conn.close()
 
     return peliculas
+
+def obtener_pelicula_por_id(movie_id):
+    conn = get_connection()
+    if not conn:
+        return None
+
+    query = """
+        SELECT
+            Movie_ID,
+            Release_Date,
+            Title,
+            Overview,
+            Popularity,
+            Vote_Count,
+            Vote_Average,
+            Original_Language,
+            Genre,
+            Poster_Url
+        FROM dbo.mymoviedb
+        WHERE Movie_ID = ?;
+    """
+
+    try:
+        cursor = conn.cursor()
+        cursor.execute(query, (movie_id,))
+        row = cursor.fetchone()
+
+        if not row:
+            return None
+
+        pelicula = {
+            "id": row.Movie_ID,
+            "fecha": row.Release_Date,
+            "titulo": row.Title,
+            "overview": row.Overview,
+            "popularidad": row.Popularity,
+            "votos": row.Vote_Count,
+            "promedio": row.Vote_Average,
+            "idioma": row.Original_Language,
+            "genero": row.Genre,
+            "poster": row.Poster_Url,
+        }
+        return pelicula
+
+    except Exception as e:
+        print(f"Error al obtener película por id: {e}")
+        return None
+    finally:
+        conn.close()

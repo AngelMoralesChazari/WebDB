@@ -90,23 +90,23 @@
 
                 <div class="carousel-wrapper" id="carouselTendencias">
                     {% for peli in tendencias %}
-                    <article class="movie-card-carousel">
-                        <div class="movie-cover" style="
-                         {% if peli.poster %}
-                             background-image: url('{{ peli.poster }}');
-                             background-size: cover;
-                             background-position: center;
-                         {% endif %}
-                         ">
-                        </div>
-                        <h3 class="movie-title">{{ peli.titulo }}</h3>
-                        <p class="movie-meta">
-                            {{ peli.genero }} • {{ peli.fecha }}<br>
-                            ⭐ {{ peli.promedio|round(1) }}/10
-                        </p>
-                    </article>
-                    {% else %}
-                    <p>No se pudieron cargar las tendencias.</p>
+                    <a href="{{ url_for('detalle_pelicula', movie_id=peli.id) }}" class="movie-link">
+                        <article class="movie-card-carousel">
+                            <div class="movie-cover" style="
+                 {% if peli.poster %}
+                     background-image: url('{{ peli.poster }}');
+                     background-size: cover;
+                     background-position: center;
+                 {% endif %}
+                 ">
+                            </div>
+                            <h3 class="movie-title">{{ peli.titulo }}</h3>
+                            <p class="movie-meta">
+                                {{ peli.genero }} • {{ peli.fecha }}<br>
+                                ⭐ {{ peli.promedio|round(1) }}/10
+                            </p>
+                        </article>
+                    </a>
                     {% endfor %}
                 </div>
 
@@ -123,23 +123,23 @@
 
                 <div class="carousel-wrapper" id="carouselRecomendadas">
                     {% for peli in recomendadas %}
-                    <article class="movie-card-carousel">
-                        <div class="movie-cover" style="
-                         {% if peli.poster %}
-                             background-image: url('{{ peli.poster }}');
-                             background-size: cover;
-                             background-position: center;
-                         {% endif %}
-                         ">
-                        </div>
-                        <h3 class="movie-title">{{ peli.titulo }}</h3>
-                        <p class="movie-meta">
-                            {{ peli.genero }} • {{ peli.fecha }}<br>
-                            ⭐ {{ peli.promedio|round(1) }}/10
-                        </p>
-                    </article>
-                    {% else %}
-                    <p>No se pudieron cargar las recomendaciones.</p>
+                    <a href="{{ url_for('detalle_pelicula', movie_id=peli.id) }}" class="movie-link">
+                        <article class="movie-card-carousel">
+                            <div class="movie-cover" style="
+                 {% if peli.poster %}
+                     background-image: url('{{ peli.poster }}');
+                     background-size: cover;
+                     background-position: center;
+                 {% endif %}
+                 ">
+                            </div>
+                            <h3 class="movie-title">{{ peli.titulo }}</h3>
+                            <p class="movie-meta">
+                                {{ peli.genero }} • {{ peli.fecha }}<br>
+                                ⭐ {{ peli.promedio|round(1) }}/10
+                            </p>
+                        </article>
+                    </a>
                     {% endfor %}
                 </div>
 

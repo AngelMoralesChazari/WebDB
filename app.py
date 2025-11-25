@@ -1,8 +1,9 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, abort
 from models import (
     obtener_peliculas,
     obtener_pelicula_aleatoria,
     obtener_peliculas_aleatorias,
+    obtener_pelicula_por_id,
 )
 
 app = Flask(__name__)
@@ -11,14 +12,22 @@ app = Flask(__name__)
 @app.route("/")
 def home():
     pelicula_destacada = obtener_pelicula_aleatoria()
-    tendencias = obtener_peliculas_aleatorias(limit = 14)
-    recomendadas = obtener_peliculas_aleatorias(limit = 14)
+    tendencias = obtener_peliculas_aleatorias(limit=14)
+    recomendadas = obtener_peliculas_aleatorias(limit=14)
     return render_template(
         "index.html",
         destacada=pelicula_destacada,
         tendencias=tendencias,
         recomendadas=recomendadas,
     )
+
+
+@app.route("/pelicula/<int:movie_id>")
+def detalle_pelicula(movie_id):
+    pelicula = obtener_pelicula_por_id(movie_id)
+    if not pelicula:
+        abort(404)
+    return render_template("detalle_pelicula.html", pelicula=pelicula)
 
 
 @app.route("/peliculas")

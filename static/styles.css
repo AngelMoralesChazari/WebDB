@@ -350,3 +350,11 @@ body {
 .carousel-btn:active {
     transform: scale(0.95);
 }
+
+.movie-link {
+  text-decoration: none;
+  color: inherit;
+}
+.movie-link:visited {
+  color: inherit;
+}
