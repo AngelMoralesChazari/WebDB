@@ -1,6 +1,6 @@
 from db import get_connection
 
-
+#Banner
 def obtener_peliculas(limit=20):
     print(">>> obtener_peliculas() llamado, limit =", limit)
 
@@ -60,7 +60,7 @@ def obtener_peliculas(limit=20):
 
     return peliculas
 
-
+#Tendencias
 def obtener_pelicula_aleatoria():
     """
     Obtiene UNA película aleatoria desde la tabla dbo.mymoviedb.
@@ -114,7 +114,7 @@ def obtener_pelicula_aleatoria():
     finally:
         conn.close()
 
-
+#Recomendadas
 def obtener_peliculas_aleatorias(limit=10):
     """
     Obtiene varias películas aleatorias.

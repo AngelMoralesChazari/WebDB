@@ -1,45 +1,60 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <title>Pelis - UAGRO</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
+
+<script>
+    function scrollCarousel(direction) {
+        const carousel = document.getElementById('carouselRecomendadas');
+        const scrollAmount = 400; // píxeles a desplazar
+
+        if (direction === 'left') {
+            carousel.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+        } else {
+            carousel.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+        }
+    }
+</script>
+</body>
+
+</html>
+
 <body>
-<header class="site-header">
-    <div class="logo-area">
-        <span class="logo-icon">🦅</span>
-        <span class="logo-text">Pelis - UAGRO</span>
-    </div>
+    <header class="site-header">
+        <div class="logo-area">
+            <span class="logo-icon">🦅</span>
+            <span class="logo-text">Pelis - UAGRO</span>
+        </div>
 
-    <nav class="main-nav">
-        <a href="{{ url_for('home') }}" class="nav-link active">Inicio</a>
-        <a href="{{ url_for('peliculas') }}" class="nav-link">Películas</a>
-        <a href="{{ url_for('series') }}" class="nav-link">Series</a>
-        <a href="{{ url_for('cuenta') }}" class="nav-link">Mi cuenta</a>
-    </nav>
+        <nav class="main-nav">
+            <a href="{{ url_for('home') }}" class="nav-link active">Inicio</a>
+            <a href="{{ url_for('peliculas') }}" class="nav-link">Películas</a>
+            <a href="{{ url_for('series') }}" class="nav-link">Series</a>
+            <a href="{{ url_for('cuenta') }}" class="nav-link">Mi cuenta</a>
+        </nav>
 
-    <div class="user-area">
-        <button class="btn-login">Iniciar sesión</button>
-    </div>
-</header>
+        <div class="user-area">
+            <button class="btn-login">Iniciar sesión</button>
+        </div>
+    </header>
 
-<main class="main-content">
-    <!-- HERO (película destacada desde BD) -->
-    <section class="hero"
-             {% if destacada and destacada.poster %}
-             style="
+    <main class="main-content">
+        <!-- HERO (película destacada desde BD) -->
+        <section class="hero" {% if destacada and destacada.poster %} style="
                 background-image:
                     linear-gradient(to right, rgba(2,6,23,0.95), rgba(2,6,23,0.6), transparent),
                     url('{{ destacada.poster }}');
                 background-size: cover;
                 background-position: center top;
-             "
-             {% endif %}>
-        <div class="hero-overlay"></div>
-        <div class="hero-content">
-            {% if destacada %}
+             " {% endif %}>
+            <div class="hero-overlay"></div>
+            <div class="hero-content">
+                {% if destacada %}
                 <h1 class="hero-title">{{ destacada.titulo }}</h1>
                 <p class="hero-description">
                     <strong>{{ destacada.genero }}</strong> • {{ destacada.fecha }}<br>
@@ -50,23 +65,53 @@
                     <button class="btn-primary">▶ Reproducir</button>
                     <button class="btn-secondary">ℹ Más información</button>
                 </div>
-            {% else %}
+                {% else %}
                 <h1 class="hero-title">Película Destacada</h1>
                 <p class="hero-description">
                     No se pudo cargar la película destacada.
                 </p>
-            {% endif %}
-        </div>
-    </section>
+                {% endif %}
+            </div>
+        </section>
 
-    <!-- FILA DE PELÍCULAS: Tendencias (aleatorias) -->
-    <section class="row">
-        <h2 class="row-title">Tendencias</h2>
-        <div class="row-cards">
-            {% for peli in tendencias %}
+        <!-- FILA DE PELÍCULAS: Tendencias (aleatorias) -->
+        <!-- FILA DE PELÍCULAS: Recomendadas (carrusel horizontal) -->
+        <section class="row">
+            <h2 class="row-title">Tendencias</h2>
+            <div class="carousel-container">
+                <button class="carousel-btn carousel-btn-left" onclick="scrollCarousel('left')">‹</button>
+                <div class="carousel-wrapper" id="carouselRecomendadas">
+                    {% for peli in recomendadas %}
+                    <article class="movie-card-carousel">
+                        <div class="movie-cover" style="
+                         {% if peli.poster %}
+                             background-image: url('{{ peli.poster }}');
+                             background-size: cover;
+                             background-position: center;
+                         {% endif %}
+                         ">
+                        </div>
+                        <h3 class="movie-title">{{ peli.titulo }}</h3>
+                        <p class="movie-meta">
+                            {{ peli.genero }} • {{ peli.fecha }}<br>
+                            ⭐ {{ peli.promedio|round(1) }}/10
+                        </p>
+                    </article>
+                    {% else %}
+                    <p>No se pudieron cargar las recomendaciones.</p>
+                    {% endfor %}
+                </div>
+                <button class="carousel-btn carousel-btn-right" onclick="scrollCarousel('right')">›</button>
+            </div>
+        </section>
+
+        <!-- FILA DE PELÍCULAS: Recomendadas (aleatorias) -->
+        <section class="row">
+            <h2 class="row-title">Recomendadas para ti</h2>
+            <div class="row-cards">
+                {% for peli in recomendadas %}
                 <article class="movie-card">
-                    <div class="movie-cover"
-                         style="
+                    <div class="movie-cover" style="
                          {% if peli.poster %}
                              background-image: url('{{ peli.poster }}');
                              background-size: cover;
@@ -80,39 +125,13 @@
                         ⭐ {{ peli.promedio|round(1) }}/10
                     </p>
                 </article>
-            {% else %}
-                <p>No se pudieron cargar las tendencias.</p>
-            {% endfor %}
-        </div>
-    </section>
-
-    <!-- FILA DE PELÍCULAS: Recomendadas (aleatorias) -->
-    <section class="row">
-        <h2 class="row-title">Recomendadas para ti</h2>
-        <div class="row-cards">
-            {% for peli in recomendadas %}
-                <article class="movie-card">
-                    <div class="movie-cover"
-                         style="
-                         {% if peli.poster %}
-                             background-image: url('{{ peli.poster }}');
-                             background-size: cover;
-                             background-position: center;
-                         {% endif %}
-                         ">
-                    </div>
-                    <h3 class="movie-title">{{ peli.titulo }}</h3>
-                    <p class="movie-meta">
-                        {{ peli.genero }} • {{ peli.fecha }}<br>
-                        ⭐ {{ peli.promedio|round(1) }}/10
-                    </p>
-                </article>
-            {% else %}
+                {% else %}
                 <p>No se pudieron cargar las recomendaciones.</p>
-            {% endfor %}
-        </div>
-    </section>
-</main>
+                {% endfor %}
+            </div>
+        </section>
+    </main>
 
 </body>
+
 </html>
