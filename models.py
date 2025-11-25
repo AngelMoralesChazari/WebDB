@@ -64,7 +64,12 @@ def obtener_peliculas(limit=20):
 
     return peliculas
 
+
 def obtener_pelicula_aleatoria():
+    """
+    Obtiene UNA película aleatoria desde la tabla dbo.mymoviedb.
+    Retorna un diccionario con los datos de la película o None si hay error.
+    """
     conn = get_connection()
     if not conn:
         return None
@@ -112,6 +117,8 @@ def obtener_pelicula_aleatoria():
         return None
     finally:
         conn.close()
+
+
 def obtener_peliculas_aleatorias(limit=10):
     """
     Obtiene varias películas aleatorias.

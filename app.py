@@ -1,5 +1,9 @@
 from flask import Flask, render_template
-from models import obtener_peliculas, obtener_pelicula_aleatoria  # <-- agregar aquí
+from models import (
+    obtener_peliculas,
+    obtener_pelicula_aleatoria,
+    obtener_peliculas_aleatorias,
+)
 
 app = Flask(__name__)
 
@@ -7,7 +11,14 @@ app = Flask(__name__)
 @app.route("/")
 def home():
     pelicula_destacada = obtener_pelicula_aleatoria()
-    return render_template("index.html", destacada=pelicula_destacada)
+    tendencias = obtener_peliculas_aleatorias(limit=8)
+    recomendadas = obtener_peliculas_aleatorias(limit=8)
+    return render_template(
+        "index.html",
+        destacada=pelicula_destacada,
+        tendencias=tendencias,
+        recomendadas=recomendadas,
+    )
 
 
 @app.route("/peliculas")

@@ -1,117 +1,118 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <title>Pelis - UAGRO</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
-
 <body>
-    <header class="site-header">
-        <div class="logo-area">
-            <span class="logo-icon">🦅</span>
-            <span class="logo-text">Pelis - UAGRO</span>
-        </div>
+<header class="site-header">
+    <div class="logo-area">
+        <span class="logo-icon">🦅</span>
+        <span class="logo-text">Pelis - UAGRO</span>
+    </div>
 
-        <nav class="main-nav">
-            <a href="{{ url_for('home') }}" class="nav-link active">Inicio</a>
-            <a href="{{ url_for('peliculas') }}" class="nav-link">Películas</a>
-            <a href="{{ url_for('series') }}" class="nav-link">Series</a>
-            <a href="{{ url_for('cuenta') }}" class="nav-link">Mi cuenta</a>
-        </nav>
+    <nav class="main-nav">
+        <a href="{{ url_for('home') }}" class="nav-link active">Inicio</a>
+        <a href="{{ url_for('peliculas') }}" class="nav-link">Películas</a>
+        <a href="{{ url_for('series') }}" class="nav-link">Series</a>
+        <a href="{{ url_for('cuenta') }}" class="nav-link">Mi cuenta</a>
+    </nav>
 
-        <div class="user-area">
-            <button class="btn-login">Iniciar sesión</button>
-        </div>
-    </header>
+    <div class="user-area">
+        <button class="btn-login">Iniciar sesión</button>
+    </div>
+</header>
 
-    <main class="main-content">
-        <section class="hero" {% if destacada and destacada.poster %} style="
-            background-image:
-                linear-gradient(to right, rgba(2,6,23,0.95), rgba(2,6,23,0.6), transparent),
-                url('{{ destacada.poster }}');
-            background-size: cover;
-            background-position: center top;
-         " {% endif %}>
-            <div class="hero-overlay"></div>
-            <div class="hero-content">
-                {% if destacada %}
+<main class="main-content">
+    <!-- HERO (película destacada desde BD) -->
+    <section class="hero"
+             {% if destacada and destacada.poster %}
+             style="
+                background-image:
+                    linear-gradient(to right, rgba(2,6,23,0.95), rgba(2,6,23,0.6), transparent),
+                    url('{{ destacada.poster }}');
+                background-size: cover;
+                background-position: center top;
+             "
+             {% endif %}>
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            {% if destacada %}
                 <h1 class="hero-title">{{ destacada.titulo }}</h1>
                 <p class="hero-description">
                     <strong>{{ destacada.genero }}</strong> • {{ destacada.fecha }}<br>
-                    ⭐ {{ destacada.promedio }}/10 ({{ destacada.votos }} votos)<br><br>
+                    ⭐ {{ destacada.promedio|round(1) }}/10 ({{ destacada.votos }} votos)<br><br>
                     {{ destacada.overview[:200] }}{% if destacada.overview|length > 200 %}...{% endif %}
                 </p>
                 <div class="hero-buttons">
                     <button class="btn-primary">▶ Reproducir</button>
                     <button class="btn-secondary">ℹ Más información</button>
                 </div>
-                {% else %}
+            {% else %}
                 <h1 class="hero-title">Película Destacada</h1>
                 <p class="hero-description">
                     No se pudo cargar la película destacada.
                 </p>
-                {% endif %}
-            </div>
-        </section>
+            {% endif %}
+        </div>
+    </section>
 
-        <!-- FILA DE PELÍCULAS (de momento estáticas, luego las conectamos también) -->
-        <section class="row">
-            <h2 class="row-title">Tendencias</h2>
-            <div class="row-cards">
+    <!-- FILA DE PELÍCULAS: Tendencias (aleatorias) -->
+    <section class="row">
+        <h2 class="row-title">Tendencias</h2>
+        <div class="row-cards">
+            {% for peli in tendencias %}
                 <article class="movie-card">
-                    <div class="movie-cover"></div>
-                    <h3 class="movie-title">Pelicula 1</h3>
-                    <p class="movie-meta">Acción • 2024</p>
+                    <div class="movie-cover"
+                         style="
+                         {% if peli.poster %}
+                             background-image: url('{{ peli.poster }}');
+                             background-size: cover;
+                             background-position: center;
+                         {% endif %}
+                         ">
+                    </div>
+                    <h3 class="movie-title">{{ peli.titulo }}</h3>
+                    <p class="movie-meta">
+                        {{ peli.genero }} • {{ peli.fecha }}<br>
+                        ⭐ {{ peli.promedio|round(1) }}/10
+                    </p>
                 </article>
-                <article class="movie-card">
-                    <div class="movie-cover"></div>
-                    <h3 class="movie-title">Pelicula 2</h3>
-                    <p class="movie-meta">Drama • 2023</p>
-                </article>
-                <article class="movie-card">
-                    <div class="movie-cover"></div>
-                    <h3 class="movie-title">Pelicula 3</h3>
-                    <p class="movie-meta">Comedia • 2022</p>
-                </article>
-                <article class="movie-card">
-                    <div class="movie-cover"></div>
-                    <h3 class="movie-title">Pelicula 4</h3>
-                    <p class="movie-meta">Terror • 2021</p>
-                </article>
-            </div>
-        </section>
+            {% else %}
+                <p>No se pudieron cargar las tendencias.</p>
+            {% endfor %}
+        </div>
+    </section>
 
-        <!-- OTRA FILA -->
-        <section class="row">
-            <h2 class="row-title">Recomendadas para ti</h2>
-            <div class="row-cards">
+    <!-- FILA DE PELÍCULAS: Recomendadas (aleatorias) -->
+    <section class="row">
+        <h2 class="row-title">Recomendadas para ti</h2>
+        <div class="row-cards">
+            {% for peli in recomendadas %}
                 <article class="movie-card">
-                    <div class="movie-cover"></div>
-                    <h3 class="movie-title">Pelicula A</h3>
-                    <p class="movie-meta">Sci-Fi • 2020</p>
+                    <div class="movie-cover"
+                         style="
+                         {% if peli.poster %}
+                             background-image: url('{{ peli.poster }}');
+                             background-size: cover;
+                             background-position: center;
+                         {% endif %}
+                         ">
+                    </div>
+                    <h3 class="movie-title">{{ peli.titulo }}</h3>
+                    <p class="movie-meta">
+                        {{ peli.genero }} • {{ peli.fecha }}<br>
+                        ⭐ {{ peli.promedio|round(1) }}/10
+                    </p>
                 </article>
-                <article class="movie-card">
-                    <div class="movie-cover"></div>
-                    <h3 class="movie-title">Pelicula B</h3>
-                    <p class="movie-meta">Romance • 2019</p>
-                </article>
-                <article class="movie-card">
-                    <div class="movie-cover"></div>
-                    <h3 class="movie-title">Pelicula C</h3>
-                    <p class="movie-meta">Animación • 2018</p>
-                </article>
-                <article class="movie-card">
-                    <div class="movie-cover"></div>
-                    <h3 class="movie-title">Pelicula D</h3>
-                    <p class="movie-meta">Acción • 2017</p>
-                </article>
-            </div>
-        </section>
-    </main>
+            {% else %}
+                <p>No se pudieron cargar las recomendaciones.</p>
+            {% endfor %}
+        </div>
+    </section>
+</main>
 
 </body>
-
 </html>
