@@ -14,10 +14,7 @@ def get_connection():
         print(f"Error al conectar a la base de datos: {e}")
         return None
 
-def obtener_peliculas_aleatorias(limit=10):
-    """
-    Obtiene varias películas aleatorias.
-    """
+def obtener_peliculas_aleatorias(limit = 10):
     conn = get_connection()
     if not conn:
         return []

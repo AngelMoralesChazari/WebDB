@@ -1,6 +1,6 @@
 import pyodbc
 
-print("Iniciando prueba de conexión...")
+print("Iniciando prueba de conexión")
 
 try:
     conn = pyodbc.connect(
@@ -10,14 +10,14 @@ try:
         'Trusted_Connection=yes;'
         'Connection Timeout=5;'
     )
-    print("✅ Conexión exitosa")
+    print("Consulta estrablecida")
     cursor = conn.cursor()
     cursor.execute("SELECT TOP 3 Movie_ID, Title FROM dbo.mymoviedb;")
     rows = cursor.fetchall()
     for r in rows:
         print(r.Movie_ID, "-", r.Title)
     conn.close()
-    print("✅ Consulta terminada y conexión cerrada")
+    print("Consulta terminada y conexión cerrada")
 except Exception as e:
-    print("❌ Error en la conexión o consulta:")
+    print("Eror en la conexión:")
     print(e)

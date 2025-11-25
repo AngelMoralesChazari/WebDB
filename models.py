@@ -1,15 +1,15 @@
 from db import get_connection
 
 #Banner
-def obtener_peliculas(limit=20):
-    print(">>> obtener_peliculas() llamado, limit =", limit)
+def obtener_peliculas(limit = 20):
+    print("obtener_peliculas() llamado, limit =", limit)
 
     conn = get_connection()
     if not conn:
-        print(">>> No se pudo obtener la conexión")
+        print(" === No se pudo obtener la conexión === ")
         return []
 
-    print(">>> Conexión obtenida, ejecutando consulta...")
+    print("Conexión obtenida")
 
     query = """
         SELECT TOP (?) 
@@ -32,9 +32,9 @@ def obtener_peliculas(limit=20):
     try:
         cursor = conn.cursor()
         cursor.execute(query, (limit,))
-        print(">>> Consulta ejecutada, haciendo fetch...")
+        print("=== Consulta ejecutada")
         rows = cursor.fetchall()
-        print(">>> Filas recibidas:", len(rows))
+        print("=== Filas recibidas:", len(rows))
 
         for row in rows:
             peliculas.append({
@@ -50,22 +50,18 @@ def obtener_peliculas(limit=20):
                 "poster": row.Poster_Url,
             })
 
-        print(">>> Películas convertidas a diccionario:", len(peliculas))
+        print("=== Películas añadidas como un diccionario:", len(peliculas))
 
     except Exception as e:
         print(f"Error al obtener películas: {e}")
     finally:
         conn.close()
-        print(">>> Conexión cerrada")
+        print("!= Conexión cerrada")
 
     return peliculas
 
 #Tendencias
 def obtener_pelicula_aleatoria():
-    """
-    Obtiene UNA película aleatoria desde la tabla dbo.mymoviedb.
-    Retorna un diccionario con los datos de la película o None si hay error.
-    """
     conn = get_connection()
     if not conn:
         return None
@@ -115,10 +111,7 @@ def obtener_pelicula_aleatoria():
         conn.close()
 
 #Recomendadas
-def obtener_peliculas_aleatorias(limit=10):
-    """
-    Obtiene varias películas aleatorias.
-    """
+def obtener_peliculas_aleatorias(limit = 10):
     conn = get_connection()
     if not conn:
         return []

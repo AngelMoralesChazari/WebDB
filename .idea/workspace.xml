@@ -5,7 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ede0590d-988f-4355-be99-a7223e8db87c" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,6 +51,7 @@
   "keyToString": {
     "DefaultHtmlFileTemplate": "HTML File",
     "Flask server.WebBD.executor": "Run",
+    "JavaScript Debug.index.html.executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "Python.test_db.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
@@ -74,7 +75,10 @@
       <recent name="C:\Users\artes\Documentos\WebBD\routes" />
     </key>
   </component>
-  <component name="RunManager" selected="Flask server.WebBD">
+  <component name="RunManager" selected="JavaScript Debug.index.html">
+    <configuration name="index.html" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/WebBD/templates/index.html" useBuiltInWebServerPort="true">
+      <method v="2" />
+    </configuration>
     <configuration name="test_db" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="WebBD" />
       <option name="ENV_FILES" value="" />
@@ -116,6 +120,7 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="JavaScript Debug.index.html" />
         <item itemvalue="Python.test_db" />
       </list>
     </recent_temporary>
@@ -141,7 +146,8 @@
       <workItem from="1763606121133" duration="665000" />
       <workItem from="1763673921282" duration="7964000" />
       <workItem from="1763751942620" duration="221000" />
-      <workItem from="1764030536147" duration="4729000" />
+      <workItem from="1764030536147" duration="4948000" />
+      <workItem from="1764095625648" duration="967000" />
     </task>
     <servers />
   </component>
