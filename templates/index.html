@@ -9,8 +9,17 @@
 </head>
 
 <script>
-    function scrollCarousel(direction) {
-        const carousel = document.getElementById('carouselRecomendadas');
+    function scrollCarousel(nombre, direction) {
+        let id = '';
+        if (nombre === 'tendencias') {
+            id = 'carouselTendencias';
+        } else if (nombre === 'recomendadas') {
+            id = 'carouselRecomendadas';
+        } else {
+            return;
+        }
+
+        const carousel = document.getElementById(id);
         const scrollAmount = 400; // píxeles a desplazar
 
         if (direction === 'left') {
@@ -74,12 +83,44 @@
             </div>
         </section>
 
-        <!-- FILA DE PELÍCULAS: Tendencias (aleatorias) -->
-        <!-- FILA DE PELÍCULAS: Recomendadas (carrusel horizontal) -->
         <section class="row">
             <h2 class="row-title">Tendencias</h2>
             <div class="carousel-container">
-                <button class="carousel-btn carousel-btn-left" onclick="scrollCarousel('left')">‹</button>
+                <button class="carousel-btn carousel-btn-left" onclick="scrollCarousel('tendencias', 'left')">‹</button>
+
+                <div class="carousel-wrapper" id="carouselTendencias">
+                    {% for peli in tendencias %}
+                    <article class="movie-card-carousel">
+                        <div class="movie-cover" style="
+                         {% if peli.poster %}
+                             background-image: url('{{ peli.poster }}');
+                             background-size: cover;
+                             background-position: center;
+                         {% endif %}
+                         ">
+                        </div>
+                        <h3 class="movie-title">{{ peli.titulo }}</h3>
+                        <p class="movie-meta">
+                            {{ peli.genero }} • {{ peli.fecha }}<br>
+                            ⭐ {{ peli.promedio|round(1) }}/10
+                        </p>
+                    </article>
+                    {% else %}
+                    <p>No se pudieron cargar las tendencias.</p>
+                    {% endfor %}
+                </div>
+
+                <button class="carousel-btn carousel-btn-right"
+                    onclick="scrollCarousel('tendencias', 'right')">›</button>
+            </div>
+        </section>
+
+        <section class="row">
+            <h2 class="row-title">Recomendadas para ti</h2>
+            <div class="carousel-container">
+                <button class="carousel-btn carousel-btn-left"
+                    onclick="scrollCarousel('recomendadas', 'left')">‹</button>
+
                 <div class="carousel-wrapper" id="carouselRecomendadas">
                     {% for peli in recomendadas %}
                     <article class="movie-card-carousel">
@@ -101,33 +142,9 @@
                     <p>No se pudieron cargar las recomendaciones.</p>
                     {% endfor %}
                 </div>
-                <button class="carousel-btn carousel-btn-right" onclick="scrollCarousel('right')">›</button>
-            </div>
-        </section>
 
-        <!-- FILA DE PELÍCULAS: Recomendadas (aleatorias) -->
-        <section class="row">
-            <h2 class="row-title">Recomendadas para ti</h2>
-            <div class="row-cards">
-                {% for peli in recomendadas %}
-                <article class="movie-card">
-                    <div class="movie-cover" style="
-                         {% if peli.poster %}
-                             background-image: url('{{ peli.poster }}');
-                             background-size: cover;
-                             background-position: center;
-                         {% endif %}
-                         ">
-                    </div>
-                    <h3 class="movie-title">{{ peli.titulo }}</h3>
-                    <p class="movie-meta">
-                        {{ peli.genero }} • {{ peli.fecha }}<br>
-                        ⭐ {{ peli.promedio|round(1) }}/10
-                    </p>
-                </article>
-                {% else %}
-                <p>No se pudieron cargar las recomendaciones.</p>
-                {% endfor %}
+                <button class="carousel-btn carousel-btn-right"
+                    onclick="scrollCarousel('recomendadas', 'right')">›</button>
             </div>
         </section>
     </main>
