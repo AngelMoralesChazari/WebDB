@@ -2,10 +2,6 @@ from db import get_connection
 
 
 def obtener_peliculas(limit=20):
-    """
-    Obtiene una lista de películas desde la tabla dbo.mymoviedb.
-    Retorna una lista de diccionarios.
-    """
     print(">>> obtener_peliculas() llamado, limit =", limit)
 
     conn = get_connection()

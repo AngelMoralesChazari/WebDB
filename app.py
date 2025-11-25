@@ -11,8 +11,8 @@ app = Flask(__name__)
 @app.route("/")
 def home():
     pelicula_destacada = obtener_pelicula_aleatoria()
-    tendencias = obtener_peliculas_aleatorias(limit=8)
-    recomendadas = obtener_peliculas_aleatorias(limit=8)
+    tendencias = obtener_peliculas_aleatorias(limit = 14)
+    recomendadas = obtener_peliculas_aleatorias(limit = 14)
     return render_template(
         "index.html",
         destacada=pelicula_destacada,
