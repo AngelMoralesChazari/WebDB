@@ -157,7 +157,17 @@ def series():
 
 @app.route("/cuenta")
 def cuenta():
-    return render_template("cuenta.html")
+    usuario_id = session.get("usuario_id")
+    if not usuario_id:
+        flash("Debes iniciar sesión para ver tu cuenta.")
+        return redirect(url_for("login"))
+
+    # Filtro desde query string: ?filtro=por_vencer, vencidas, devueltas
+    filtro = request.args.get("filtro", "").strip() or None
+
+    rentas = obtener_rentas_por_usuario(usuario_id, filtro=filtro)
+
+    return render_template("cuenta.html", rentas=rentas, filtro_actual=filtro)
 
 @app.route("/logout")
 def logout():
@@ -170,13 +180,8 @@ def logout():
 
 @app.route("/rentas")
 def sistema_rentas():
-    usuario_id = session.get("usuario_id")
-    if not usuario_id:
-        flash("Debes iniciar sesión para ver tus rentas.")
-        return redirect(url_for("login"))
-
-    rentas = obtener_rentas_por_usuario(usuario_id)
-    return render_template("rentas.html", rentas=rentas)
+    # Para no romper enlaces viejos, redirigimos a Mi cuenta
+    return redirect(url_for("cuenta"))
 
 
 @app.route("/rentar/<int:movie_id>")

@@ -467,9 +467,10 @@ def crear_renta(usuario_id, movie_id, dias=3, monto=None):
         conn.close()
 
 
-def obtener_rentas_por_usuario(usuario_id):
+def obtener_rentas_por_usuario(usuario_id, filtro=None):
     """
-    Devuelve todas las rentas de un usuario, con info básica de la película.
+    Devuelve las rentas de un usuario.
+    filtro puede ser: None, 'por_vencer', 'vencidas', 'devueltas'
     """
     conn = get_connection()
     if not conn:
@@ -498,30 +499,44 @@ def obtener_rentas_por_usuario(usuario_id):
         cursor.execute(query, (usuario_id,))
         rows = cursor.fetchall()
 
+        from datetime import datetime
+        ahora = datetime.now()
+
         for row in rows:
             fecha_devolucion = row.FechaDevolucion
-            estatus_bd = row.Estatus
+            estatus_bd = (row.Estatus or "").strip()
 
-            # Cálculo de estatus "dinámico"
-            if estatus_bd == "Completada":
-                estatus_mostrado = "Completada"
+            # Cálculo de estatus "amigable"
+            if estatus_bd.lower() in ("completada", "devuelto", "devuelta", "cancelado", "cancelada"):
+                estatus_mostrado = "Devuelta/Cancelada"
             else:
-                ahora = datetime.now()
                 if fecha_devolucion and ahora > fecha_devolucion:
-                    estatus_mostrado = "Atrasada"
+                    estatus_mostrado = "Vencida"
                 else:
-                    estatus_mostrado = "A tiempo"
+                    estatus_mostrado = "Por vencer"
 
-            rentas.append({
+            renta = {
                 "renta_id": row.Renta_ID,
                 "fecha_inicio": row.FechaInicio,
                 "fecha_devolucion": fecha_devolucion,
                 "estatus": estatus_mostrado,
+                "estatus_bd": estatus_bd,
                 "monto": row.Monto,
                 "movie_id": row.Movie_ID,
                 "titulo": row.Title,
                 "poster": row.Poster_Url,
-            })
+            }
+
+            # Aplicar filtro en memoria
+            if filtro == "por_vencer" and renta["estatus"] != "Por vencer":
+                continue
+            if filtro == "vencidas" and renta["estatus"] != "Vencida":
+                continue
+            if filtro == "devueltas" and renta["estatus"] != "Devuelta/Cancelada":
+                continue
+
+            rentas.append(renta)
+
     except Exception as e:
         print(f"Error al obtener rentas por usuario: {e}")
     finally:

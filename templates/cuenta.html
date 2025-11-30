@@ -37,13 +37,95 @@
     </div>
 </header>
 
-<main class="main-content">
-    <h1 class="row-title">Mi cuenta</h1>
-    <p class="hero-description">
-        Aquí gestionaremos los datos del usuario, sus rentas, etc.
-        (Más adelante conectaremos esta página con el sistema de usuarios.)
-    </p>
+<main class="main-content peliculas-page">
+    <section class="row-header">
+        <h1 class="row-title">Mi cuenta</h1>
+    </section>
+
+    <!-- === SECCIÓN: PELÍCULAS RENTADAS === -->
+    <section style="margin-top: 2rem;">
+        <h2 class="row-title" style="font-size:1.3rem;">Películas Rentadas</h2>
+
+        <!-- Filtros -->
+        <div style="margin: 0.75rem 0 1.25rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
+            <a href="{{ url_for('cuenta') }}"
+               class="btn-secondary btn-sm {% if not filtro_actual %}btn-primary{% endif %}">
+                Todas
+            </a>
+
+            <a href="{{ url_for('cuenta', filtro='por_vencer') }}"
+               class="btn-secondary btn-sm {% if filtro_actual == 'por_vencer' %}btn-primary{% endif %}">
+                Por vencer
+            </a>
+
+            <a href="{{ url_for('cuenta', filtro='vencidas') }}"
+               class="btn-secondary btn-sm {% if filtro_actual == 'vencidas' %}btn-primary{% endif %}">
+                Vencidas
+            </a>
+
+            <a href="{{ url_for('cuenta', filtro='devueltas') }}"
+               class="btn-secondary btn-sm {% if filtro_actual == 'devueltas' %}btn-primary{% endif %}">
+                Devueltas / Canceladas
+            </a>
+        </div>
+
+        {% if rentas %}
+            <div class="movies-grid">
+                {% for r in rentas %}
+                <article class="movie-card-grid">
+                    <div class="movie-poster-wrapper">
+                        <div class="movie-poster"
+                             style="{% if r.poster %}background-image: url('{{ r.poster }}');{% endif %}">
+                        </div>
+                    </div>
+                    <div class="movie-info">
+                        <h3 class="movie-title">{{ r.titulo }}</h3>
+
+                        <p class="movie-meta">
+                            Inicio: {{ r.fecha_inicio.strftime('%Y-%m-%d') }}<br>
+                            Devolución: {{ r.fecha_devolucion.strftime('%Y-%m-%d') if r.fecha_devolucion }}<br>
+                            Estatus:
+                            {% if r.estatus == 'Vencida' %}
+                                <span style="color:#f87171; font-weight:600;">{{ r.estatus }}</span>
+                            {% elif r.estatus == 'Devuelta/Cancelada' %}
+                                <span style="color:#9ca3af; font-weight:600;">{{ r.estatus }}</span>
+                            {% else %}
+                                <span style="color:#fde68a; font-weight:600;">{{ r.estatus }}</span>
+                            {% endif %}
+                        </p>
+
+                        {% if r.monto %}
+                        <p class="movie-votes">
+                            Monto (simulado): ${{ '%.2f'|format(r.monto) }} MXN
+                        </p>
+                        {% endif %}
+                    </div>
+                </article>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p style="color: #9ca3af; text-align: center; margin-top: 2rem;">
+                No tienes rentas registradas por el momento.
+            </p>
+        {% endif %}
+    </section>
 </main>
 
+<script>
+// Dropdown usuario (mismo código que en las otras páginas)
+document.addEventListener('click', function (e) {
+    const toggle = document.querySelector('.user-menu-toggle');
+    const dropdown = document.querySelector('.user-menu-dropdown');
+
+    if (!toggle || !dropdown) return;
+
+    if (toggle.contains(e.target)) {
+        const isVisible = dropdown.style.display === 'block';
+        dropdown.style.display = isVisible ? 'none' : 'block';
+    } else if (!dropdown.contains(e.target)) {
+        dropdown.style.display = 'none';
+    }
+});
+</script>
 </body>
 </html>
