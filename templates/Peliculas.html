@@ -15,7 +15,8 @@
 
     <nav class="main-nav">
         <a href="{{ url_for('home') }}" class="nav-link">Inicio</a>
-        <a href="{{ url_for('peliculas') }}" class="nav-link">Películas</a>
+        <a href="{{ url_for('peliculas') }}" class="nav-link active">Películas</a>
+        <a href="{{ url_for('series') }}" class="nav-link">Series</a>
         <a href="{{ url_for('cuenta') }}" class="nav-link">Mi cuenta</a>
     </nav>
 
@@ -37,40 +38,49 @@
     </div>
 </header>
 
-<main class="main-content">
-    <h1 class="row-title">Películas</h1>
-    <p class="hero-description">
-        Estas películas vienen directamente de la base de datos <strong>Movies.dbo.mymoviedb</strong>.
-    </p>
-
+<main class="main-content peliculas-page">
     <section class="row" style="margin-top: 20px;">
-        <h2 class="row-title">Catálogo</h2>
-        <div class="row-cards">
+        <div class="row-header">
+            <h2 class="row-title">Catálogo completo</h2>
+            <p class="row-subtitle">Explora las películas disponibles en la plataforma.</p>
+        </div>
+
+        {% if peliculas %}
+        <div class="movies-grid">
             {% for peli in peliculas %}
-                <article class="movie-card">
-                    <div class="movie-cover"
-                         style="
-                         {% if peli.poster %}
-                             background-image: url('{{ peli.poster }}');
-                             background-size: cover;
-                             background-position: center;
-                         {% endif %}
-                         ">
+            <a href="{{ url_for('detalle_pelicula', movie_id=peli.id) }}" class="movie-card-link">
+                <article class="movie-card-grid">
+                    <div class="movie-poster-wrapper">
+                        <div class="movie-poster"
+                             style="
+                             {% if peli.poster %}
+                                 background-image: url('{{ peli.poster }}');
+                             {% endif %}
+                             ">
+                        </div>
+                        <div class="movie-rating-badge">
+                            ⭐ {{ peli.promedio|round(1) }}/10
+                        </div>
                     </div>
-                    <h3 class="movie-title">{{ peli.titulo }}</h3>
-                    <p class="movie-meta">
-                        {{ peli.genero }} • {{ peli.fecha }}<br>
-                        ⭐ {{ peli.promedio }} ({{ peli.votos }} votos)
-                    </p>
+                    <div class="movie-info">
+                        <h3 class="movie-title">{{ peli.titulo }}</h3>
+                        <p class="movie-meta">
+                            {{ peli.genero }} • {{ peli.fecha }}<br>
+                            <span class="movie-votes">{{ peli.votos }} votos</span>
+                        </p>
+                    </div>
                 </article>
-            {% else %}
-                <p>No hay películas para mostrar.</p>
+            </a>
             {% endfor %}
         </div>
+        {% else %}
+        <p>No hay películas para mostrar.</p>
+        {% endif %}
     </section>
 </main>
-</body>
+
 <script>
+    // Dropdown usuario
     document.addEventListener('click', function (e) {
         const toggle = document.querySelector('.user-menu-toggle');
         const dropdown = document.querySelector('.user-menu-dropdown');
@@ -85,4 +95,5 @@
         }
     });
 </script>
+</body>
 </html>
