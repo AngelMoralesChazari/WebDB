@@ -110,7 +110,7 @@ body {
 /* HERO */
 .hero {
   position: relative;
-  height: 250px;
+  min-height: 250px;   /* altura mínima, pero puede crecer */
   border-radius: 18px;
   overflow: hidden;
   margin-bottom: 32px;
