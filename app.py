@@ -61,12 +61,11 @@ def login_post():
         flash("Correo o contraseña incorrectos.")
         return redirect(url_for("login"))
 
+    # Guardar usuario en sesión (sin mensaje de bienvenida)
     session["usuario_id"] = usuario["id"]
     session["usuario_nombre"] = usuario["nombre"]
 
-    flash(f"Bienvenido, {usuario['nombre']} (aún sin sesión persistente).")
     return redirect(url_for("home"))
-
 
 @app.route("/")
 def home():
@@ -107,7 +106,6 @@ def cuenta():
 def logout():
     session.pop("usuario_id", None)
     session.pop("usuario_nombre", None)
-    flash("Has cerrado sesión correctamente.")
     return redirect(url_for("home"))
 
 if __name__ == "__main__":
