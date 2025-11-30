@@ -12,14 +12,28 @@
         <span class="logo-icon">🦅</span>
         <span class="logo-text">Pelis - UAGRO</span>
     </div>
+
     <nav class="main-nav">
         <a href="{{ url_for('home') }}" class="nav-link">Inicio</a>
-        <a href="{{ url_for('peliculas') }}" class="nav-link active">Películas</a>
-        <a href="{{ url_for('series') }}" class="nav-link">Series</a>
+        <a href="{{ url_for('peliculas') }}" class="nav-link">Películas</a>
         <a href="{{ url_for('cuenta') }}" class="nav-link">Mi cuenta</a>
     </nav>
+
     <div class="user-area">
-        <button class="btn-login">Iniciar sesión</button>
+        {% if session.get('usuario_nombre') %}
+            {% set primer_nombre = session['usuario_nombre'].split(' ')[0] %}
+            <div class="user-menu">
+                <button class="btn-login user-menu-toggle">
+                    {{ primer_nombre }}
+                </button>
+                <div class="user-menu-dropdown">
+                    <a href="{{ url_for('cuenta') }}">Configuración</a>
+                    <a href="{{ url_for('logout') }}">Cerrar sesión</a>
+                </div>
+            </div>
+        {% else %}
+            <a href="{{ url_for('login') }}" class="btn-login">Iniciar sesión</a>
+        {% endif %}
     </div>
 </header>
 
@@ -56,4 +70,19 @@
     </section>
 </main>
 </body>
+<script>
+    document.addEventListener('click', function (e) {
+        const toggle = document.querySelector('.user-menu-toggle');
+        const dropdown = document.querySelector('.user-menu-dropdown');
+
+        if (!toggle || !dropdown) return;
+
+        if (toggle.contains(e.target)) {
+            const isVisible = dropdown.style.display === 'block';
+            dropdown.style.display = isVisible ? 'none' : 'block';
+        } else if (!dropdown.contains(e.target)) {
+            dropdown.style.display = 'none';
+        }
+    });
+</script>
 </html>
