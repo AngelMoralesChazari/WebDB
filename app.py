@@ -22,6 +22,16 @@ app.secret_key = "test"
 
 @app.route("/login", methods=["GET"])
 def login():
+    flashes = session.get('_flashes', [])
+
+    mensajes_a_mantener = []
+    for category, message in flashes:
+        if any(keyword in message.lower() for keyword in
+               ["correo", "contraseña", "obligatorios", "registrado", "sesión"]):
+            mensajes_a_mantener.append((category, message))
+
+    session['_flashes'] = mensajes_a_mantener
+
     return render_template("login.html")
 
 @app.route("/registro", methods=["POST"])
