@@ -265,3 +265,74 @@ def obtener_usuario_por_email(email):
     finally:
         conn.close()
         print("!= Conexión cerrada en obtener_usuario_por_email")
+
+def buscar_peliculas(texto=None, genero=None, anio=None, limit=50):
+    conn = get_connection()
+    if not conn:
+        print("=== No se pudo obtener la conexión en buscar_peliculas ===")
+        return []
+
+    # Construimos la consulta dinámica
+    base_query = """
+        SELECT TOP ({limit})
+            Movie_ID,
+            Release_Date,
+            Title,
+            Overview,
+            Popularity,
+            Vote_Count,
+            Vote_Average,
+            Original_Language,
+            Genre,
+            Poster_Url
+        FROM dbo.mymoviedb
+        WHERE 1=1
+    """.format(limit=limit)
+
+    params = []
+
+    # Filtro por texto en título u overview
+    if texto:
+        base_query += " AND (Title LIKE ? OR Overview LIKE ?)"
+        like_text = f"%{texto}%"
+        params.append(like_text)
+        params.append(like_text)
+
+    # Filtro por género (contenga el género)
+    if genero:
+        base_query += " AND Genre LIKE ?"
+        params.append(f"%{genero}%")
+
+    # Filtro por año: comparamos con el año de Release_Date
+    if anio:
+        base_query += " AND YEAR(Release_Date) = ?"
+        params.append(anio)
+
+    # Ordenamos por popularidad
+    base_query += " ORDER BY Popularity DESC;"
+
+    peliculas = []
+    try:
+        cursor = conn.cursor()
+        cursor.execute(base_query, tuple(params))
+        rows = cursor.fetchall()
+
+        for row in rows:
+            peliculas.append({
+                "id": row.Movie_ID,
+                "fecha": row.Release_Date,
+                "titulo": row.Title,
+                "overview": row.Overview,
+                "popularidad": row.Popularity,
+                "votos": row.Vote_Count,
+                "promedio": row.Vote_Average,
+                "idioma": row.Original_Language,
+                "genero": row.Genre,
+                "poster": row.Poster_Url,
+            })
+    except Exception as e:
+        print(f"Error en buscar_peliculas: {e}")
+    finally:
+        conn.close()
+
+    return peliculas

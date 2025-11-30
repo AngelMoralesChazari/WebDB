@@ -18,7 +18,6 @@
         <nav class="main-nav">
             <a href="{{ url_for('home') }}" class="nav-link">Inicio</a>
             <a href="{{ url_for('peliculas') }}" class="nav-link active">Películas</a>
-            <a href="{{ url_for('series') }}" class="nav-link">Series</a>
             <a href="{{ url_for('cuenta') }}" class="nav-link">Mi cuenta</a>
         </nav>
 
@@ -45,6 +44,41 @@
             <div class="row-header">
                 <h2 class="row-title">Catálogo</h2>
             </div>
+
+            <!-- PANEL DE BÚSQUEDA Y FILTROS -->
+            <form class="movies-filters" method="get" action="{{ url_for('peliculas') }}">
+                <div class="filter-group search-group">
+                    <label for="q">Buscar</label>
+                    <input type="text" id="q" name="q" value="{{ q }}" placeholder="Título o descripción...">
+                </div>
+
+                <div class="filter-group">
+                    <label for="genero">Género</label>
+                    <select id="genero" name="genero">
+                        <option value="">Todos</option>
+                        <option value="Action" {% if genero_actual=='Action' %}selected{% endif %}>Acción</option>
+                        <option value="Adventure" {% if genero_actual=='Adventure' %}selected{% endif %}>Aventura
+                        </option>
+                        <option value="Comedy" {% if genero_actual=='Comedy' %}selected{% endif %}>Comedia</option>
+                        <option value="Drama" {% if genero_actual=='Drama' %}selected{% endif %}>Drama</option>
+                        <option value="Horror" {% if genero_actual=='Horror' %}selected{% endif %}>Terror</option>
+                        <option value="Animation" {% if genero_actual=='Animation' %}selected{% endif %}>Animación
+                        </option>
+                        <!-- Puedes ir agregando más según tu BD -->
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="anio">Año</label>
+                    <input type="number" id="anio" name="anio" value="{{ anio_actual }}" placeholder="Ej. 2022"
+                        min="1900" max="2100">
+                </div>
+
+                <div class="filter-actions">
+                    <button type="submit" class="btn-primary">Filtrar</button>
+                    <a href="{{ url_for('peliculas') }}" class="btn-secondary filter-reset">Limpiar</a>
+                </div>
+            </form>
 
             {% if peliculas %}
             <div class="movies-grid">

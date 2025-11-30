@@ -6,6 +6,7 @@ from models import (
     obtener_pelicula_por_id,
     registrar_usuario,
     obtener_usuario_por_email,
+    buscar_peliculas,
 )
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -89,10 +90,32 @@ def detalle_pelicula(movie_id):
 
 @app.route("/peliculas")
 def peliculas():
-    print(">>> Entrando a la ruta /peliculas")
-    lista_peliculas = obtener_peliculas(limit=24)
-    print(">>> En vista /peliculas, len(lista_peliculas) =", len(lista_peliculas))
-    return render_template("peliculas.html", peliculas=lista_peliculas)
+    # Parámetros de búsqueda / filtros
+    q = request.args.get("q", "").strip()          # texto de búsqueda
+    genero = request.args.get("genero", "").strip()
+    anio = request.args.get("anio", "").strip()
+
+    # Si no hay filtros, usamos el listado normal (18)
+    if not q and not genero and not anio:
+        peliculas = obtener_peliculas(limit=18)
+    else:
+        # Convertir año a int si viene algo
+        anio_int = int(anio) if anio.isdigit() else None
+        peliculas = buscar_peliculas(
+            texto=q or None,
+            genero=genero or None,
+            anio=anio_int,
+            limit=60   # un poco más amplio cuando se filtra
+        )
+
+    # Pasamos los valores actuales de filtro al template para mantenerlos
+    return render_template(
+        "Peliculas.html",
+        peliculas=peliculas,
+        q=q,
+        genero_actual=genero,
+        anio_actual=anio
+    )
 
 @app.route("/series")
 def series():
