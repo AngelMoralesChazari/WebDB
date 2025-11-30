@@ -641,3 +641,51 @@ def tiene_renta_activa(usuario_id, movie_id):
         return False
     finally:
         conn.close()
+
+def eliminar_usuario(usuario_id):
+    """
+    Elimina un usuario y sus rentas asociadas dentro de una transacción.
+    Retorna True si se eliminó correctamente, False si hubo error o no existe.
+    """
+    conn = get_connection()
+    if not conn:
+        print("=== No se pudo obtener la conexión en eliminar_usuario ===")
+        return False
+
+    try:
+        cursor = conn.cursor()
+        # Iniciar transacción explícita (pyodbc maneja transacción con commit/rollback)
+        cursor.execute("BEGIN TRANSACTION;")
+
+        # (Opcional) Comprobar existencia
+        cursor.execute("SELECT COUNT(*) FROM dbo.Usuarios WHERE Usuario_ID = ?", (usuario_id,))
+        if cursor.fetchone()[0] == 0:
+            cursor.execute("ROLLBACK;")
+            print(f"eliminar_usuario: usuario {usuario_id} no existe")
+            return False
+
+        # 1) Eliminar rentas asociadas (si prefieres conservar histórico cambia a soft-delete o reasignación)
+        cursor.execute("DELETE FROM dbo.Rentas WHERE Usuario_ID = ?", (usuario_id,))
+
+        # 2) Eliminar registros dependientes adicionales si los hubiera (ej: favoritos, reviews)
+        # cursor.execute("DELETE FROM dbo.Favoritos WHERE Usuario_ID = ?", (usuario_id,))
+
+        # 3) Eliminar el usuario
+        cursor.execute("DELETE FROM dbo.Usuarios WHERE Usuario_ID = ?", (usuario_id,))
+
+        conn.commit()
+        print(f">>> Usuario {usuario_id} y sus rentas eliminadas correctamente.")
+        return True
+
+    except Exception as e:
+        print(f"Error en eliminar_usuario: {e}")
+        try:
+            conn.rollback()
+        except:
+            pass
+        return False
+    finally:
+        try:
+            conn.close()
+        except:
+            pass

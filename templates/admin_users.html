@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <title>Admin - Usuarios</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <header class="site-header">
+    <div class="logo-area">
+      <span class="logo-icon">🦅</span>
+      <span class="logo-text">Pelis - UAGRO</span>
+    </div>
+    <nav class="main-nav">
+      <a href="{{ url_for('home') }}" class="nav-link">Inicio</a>
+      <a href="{{ url_for('peliculas') }}" class="nav-link">Películas</a>
+      <a href="{{ url_for('cuenta') }}" class="nav-link">Mi cuenta</a>
+    </nav>
+  </header>
+
+  <main class="main-content">
+    <h1>Panel de Administración - Usuarios</h1>
+
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Email</th>
+          <th>Fecha Registro</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for u in usuarios %}
+        <tr>
+          <td>{{ u.Usuario_ID }}</td>
+          <td>{{ u.Nombre }}</td>
+          <td>{{ u.Email }}</td>
+          <td>{{ u.FechaRegistro }}</td>
+          <td>
+            <form method="post" action="{{ url_for('admin_eliminar_usuario', usuario_id=u.Usuario_ID) }}" onsubmit="return confirm('Eliminar usuario {{ u.Email }} (ID: {{ u.Usuario_ID }}) ? Esto eliminará también sus rentas.');" style="display:inline;">
+              <button type="submit" class="btn-danger btn-sm">Eliminar</button>
+            </form>
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </main>
+</body>
+</html>

@@ -14,6 +14,7 @@ from models import (
     tiene_renta_activa,
 )
 from werkzeug.security import generate_password_hash, check_password_hash
+from models import eliminar_usuario, obtener_usuario_por_email
 
 app = Flask(__name__)
 app.secret_key = "test"
@@ -272,6 +273,64 @@ def cancelar_renta(renta_id):
     else:
         flash("Renta cancelada.")
     return redirect(url_for("cuenta"))
+
+@app.route("/admin/eliminar_usuario/<int:usuario_id>", methods=["POST"])
+def admin_eliminar_usuario(usuario_id):
+    # Comprobación mínima: solo permitir si el usuario es "admin" (aquí usamos usuario_id == 1 como ejemplo)
+    usuario_actual = session.get("usuario_id")
+    if not usuario_actual:
+        flash("Debes iniciar sesión para realizar esta acción.")
+        return redirect(url_for("login"))
+
+    # Opción A (recomendada mínima): solo admin id=1 puede eliminar usuarios
+    if usuario_actual != 1:
+        flash("No autorizado. Solo el administrador puede eliminar usuarios.")
+        return redirect(url_for("cuenta"))
+
+    # Evitar eliminar al propio admin accidentalmente
+    if usuario_id == usuario_actual:
+        flash("No puedes eliminar tu propia cuenta desde el panel de admin.")
+        return redirect(url_for("admin_users"))
+
+    ok = eliminar_usuario(usuario_id)
+    if ok:
+        flash(f"Usuario {usuario_id} eliminado correctamente.")
+    else:
+        flash("No se pudo eliminar el usuario. Revisa los logs.")
+    return redirect(url_for("admin_users"))
+
+@app.route("/admin/usuarios")
+def admin_users():
+    usuario_actual = session.get("usuario_id")
+    if not usuario_actual:
+        flash("Debes iniciar sesión.")
+        return redirect(url_for("login"))
+
+    # Permiso mínimo (admin = id 1)
+    if usuario_actual != 1:
+        flash("No autorizado.")
+        return redirect(url_for("cuenta"))
+
+    # Obtener lista de usuarios (implementa una función en models.py o hacer consulta aquí)
+    from db import get_connection
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT Usuario_ID, Nombre, Email, FechaRegistro
+        FROM dbo.Usuarios
+        ORDER BY FechaRegistro DESC;
+    """)
+    usuarios = []
+    rows = cursor.fetchall()
+    for row in rows:
+        usuarios.append({
+            "Usuario_ID": row.Usuario_ID,
+            "Nombre": row.Nombre,
+            "Email": row.Email,
+            "FechaRegistro": row.FechaRegistro
+        })
+    conn.close()
+    return render_template("admin_users.html", usuarios=usuarios)
 
 if __name__ == "__main__":
     app.run(debug=True, host="127.0.0.1", port=8000)
