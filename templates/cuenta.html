@@ -1,143 +1,144 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-    <meta charset="UTF-8">
-    <title>Mi cuenta - Pelis - Uagro</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <meta charset="UTF-8">
+  <title>Mi cuenta - Pelis - Uagro</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
+
 <body>
-<header class="site-header">
+  <header class="site-header">
     <div class="logo-area">
-        <span class="logo-icon">🦅</span>
-        <span class="logo-text">Pelis - UAGRO</span>
+      <span class="logo-icon">🦅</span>
+      <span class="logo-text">Pelis - UAGRO</span>
     </div>
 
     <nav class="main-nav">
-        <a href="{{ url_for('home') }}" class="nav-link">Inicio</a>
-        <a href="{{ url_for('peliculas') }}" class="nav-link">Películas</a>
-        <a href="{{ url_for('cuenta') }}" class="nav-link">Mi cuenta</a>
+      <a href="{{ url_for('home') }}" class="nav-link">Inicio</a>
+      <a href="{{ url_for('peliculas') }}" class="nav-link">Películas</a>
+      <a href="{{ url_for('cuenta') }}" class="nav-link">Mi cuenta</a>
     </nav>
 
     <div class="user-area">
-        {% if session.get('usuario_nombre') %}
-            {% set primer_nombre = session['usuario_nombre'].split(' ')[0] %}
-            <div class="user-menu">
-                <button class="btn-login user-menu-toggle">
-                    {{ primer_nombre }}
-                </button>
-                <div class="user-menu-dropdown">
-                    <a href="{{ url_for('cuenta') }}">Configuración</a>
-                    <a href="{{ url_for('logout') }}">Cerrar sesión</a>
-                </div>
-            </div>
-        {% else %}
-            <a href="{{ url_for('login') }}" class="btn-login">Iniciar sesión</a>
-        {% endif %}
+      {% if session.get('usuario_nombre') %}
+      {% set primer_nombre = session['usuario_nombre'].split(' ')[0] %}
+      <div class="user-menu">
+        <button class="btn-login user-menu-toggle">
+          {{ primer_nombre }}
+        </button>
+        <div class="user-menu-dropdown">
+          <a href="{{ url_for('cuenta') }}">Configuración</a>
+          <a href="{{ url_for('logout') }}">Cerrar sesión</a>
+        </div>
+      </div>
+      {% else %}
+      <a href="{{ url_for('login') }}" class="btn-login">Iniciar sesión</a>
+      {% endif %}
     </div>
-</header>
+  </header>
 
-<main class="main-content peliculas-page">
+  <main class="main-content peliculas-page">
     <section class="row-header">
-        <h1 class="row-title">Mi cuenta</h1>
+      <h1 class="row-title">Mi cuenta</h1>
     </section>
 
     <!-- === SECCIÓN: PELÍCULAS RENTADAS === -->
     <section style="margin-top: 2rem;">
-        <h2 class="row-title" style="font-size:1.3rem;">Películas Rentadas</h2>
+      <h2 class="row-title" style="font-size:1.3rem;">Películas Rentadas</h2>
 
-        <!-- Filtros -->
-        <div style="margin: 0.75rem 0 1.25rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
-            <a href="{{ url_for('cuenta') }}"
-               class="btn-secondary btn-sm {% if not filtro_actual %}btn-primary{% endif %}">
-                Todas
-            </a>
+      <!-- Filtros -->
+      <div style="margin: 0.75rem 0 1.25rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
+        <a href="{{ url_for('cuenta') }}" class="btn-secondary btn-sm {% if not filtro_actual %}btn-primary{% endif %}">
+          Todas
+        </a>
 
-            <a href="{{ url_for('cuenta', filtro='por_vencer') }}"
-               class="btn-secondary btn-sm {% if filtro_actual == 'por_vencer' %}btn-primary{% endif %}">
-                Por vencer
-            </a>
+        <a href="{{ url_for('cuenta', filtro='por_vencer') }}"
+          class="btn-secondary btn-sm {% if filtro_actual == 'por_vencer' %}btn-primary{% endif %}">
+          Por vencer
+        </a>
 
-            <a href="{{ url_for('cuenta', filtro='vencidas') }}"
-               class="btn-secondary btn-sm {% if filtro_actual == 'vencidas' %}btn-primary{% endif %}">
-                Vencidas
-            </a>
+        <a href="{{ url_for('cuenta', filtro='vencidas') }}"
+          class="btn-secondary btn-sm {% if filtro_actual == 'vencidas' %}btn-primary{% endif %}">
+          Vencidas
+        </a>
 
-            <a href="{{ url_for('cuenta', filtro='devueltas') }}"
-               class="btn-secondary btn-sm {% if filtro_actual == 'devueltas' %}btn-primary{% endif %}">
-                Devueltas / Canceladas
-            </a>
-        </div>
+        <a href="{{ url_for('cuenta', filtro='devueltas') }}"
+          class="btn-secondary btn-sm {% if filtro_actual == 'devueltas' %}btn-primary{% endif %}">
+          Devueltas / Canceladas
+        </a>
+      </div>
 
-        {% if rentas %}
-            <div class="movies-grid">
-                {% for r in rentas %}
-                <article class="movie-card-grid">
-                    <div class="movie-poster-wrapper">
-                        <div class="movie-poster"
-                             style="{% if r.poster %}background-image: url('{{ r.poster }}');{% endif %}">
-                        </div>
-                    </div>
-                    <div class="movie-info">
-                        <h3 class="movie-title">{{ r.titulo }}</h3>
-
-                        <p class="movie-meta">
-                            Inicio: {{ r.fecha_inicio.strftime('%Y-%m-%d') }}<br>
-                            Devolución: {{ r.fecha_devolucion.strftime('%Y-%m-%d') if r.fecha_devolucion }}<br>
-                            Estatus:
-                            {% if r.estatus == 'Vencida' %}
-                                <span style="color:#f87171; font-weight:600;">{{ r.estatus }}</span>
-                            {% elif r.estatus == 'Devuelta/Cancelada' %}
-                                <span style="color:#9ca3af; font-weight:600;">{{ r.estatus }}</span>
-                            {% else %}
-                                <span style="color:#fde68a; font-weight:600;">{{ r.estatus }}</span>
-                            {% endif %}
-                        </p>
-
-                        {% if r.monto %}
-                        <p class="movie-votes">
-                            Monto (simulado): ${{ '%.2f'|format(r.monto) }} MXN
-                        </p>
-                        {% endif %}
-
-                        <!-- Mostrar botones solo si está activa -->
-                        {% if r.estatus in ['Activa', 'Por vencer'] %}
-                        <div style="margin-top: 0.75rem;">
-                            <form action="{{ url_for('devolver_renta', renta_id=r.renta_id) }}" method="post" style="display:inline;">
-                                <button type="submit" class="btn-secondary btn-sm" style="margin-right: 0.5rem;">Devolver</button>
-                            </form>
-                            <form action="{{ url_for('cancelar_renta', renta_id=r.renta_id) }}" method="post" style="display:inline;">
-                                <button type="submit" class="btn-danger btn-sm">Cancelar</button>
-                            </form>
-                        </div>
-                        {% endif %}
-                    </div>
-                </article>
-                {% endfor %}
+      {% if rentas %}
+      <div class="movies-grid">
+        {% for r in rentas %}
+        <article class="movie-card-grid">
+          <div class="movie-poster-wrapper">
+            <div class="movie-poster" style="{% if r.poster %}background-image: url('{{ r.poster }}');{% endif %}">
             </div>
-        {% else %}
-            <p style="color: #9ca3af; text-align: center; margin-top: 2rem;">
-                No tienes rentas registradas por el momento.
+          </div>
+          <div class="movie-info">
+            <h3 class="movie-title">{{ r.titulo }}</h3>
+
+            <p class="movie-meta">
+              Inicio: {{ r.fecha_inicio.strftime('%Y-%m-%d') }}<br>
+              Devolución: {{ r.fecha_devolucion.strftime('%Y-%m-%d') if r.fecha_devolucion }}<br>
+              Estatus:
+              {% if r.estatus == 'Vencida' %}
+              <span style="color:#f87171; font-weight:600;">{{ r.estatus }}</span>
+              {% elif r.estatus == 'Devuelta/Cancelada' %}
+              <span style="color:#9ca3af; font-weight:600;">{{ r.estatus }}</span>
+              {% else %}
+              <span style="color:#fde68a; font-weight:600;">{{ r.estatus }}</span>
+              {% endif %}
             </p>
-        {% endif %}
+
+            {% if r.monto %}
+            <p class="movie-votes">
+              Monto (simulado): ${{ '%.2f'|format(r.monto) }} MXN
+            </p>
+            {% endif %}
+
+            <!-- Mostrar botones solo si está activa -->
+            {% if r.estatus in ['Activa', 'Por vencer'] %}
+            <div style="margin-top: 0.75rem;">
+              <form action="{{ url_for('devolver_renta', renta_id=r.renta_id) }}" method="post" style="display:inline;">
+                <button type="submit" class="btn-secondary btn-sm" style="margin-right: 0.5rem;">Devolver</button>
+              </form>
+              <form action="{{ url_for('cancelar_renta', renta_id=r.renta_id) }}" method="post" style="display:inline;">
+                <button type="submit" class="btn-danger btn-sm">Cancelar</button>
+              </form>
+            </div>
+            {% endif %}
+          </div>
+        </article>
+        {% endfor %}
+      </div>
+      {% else %}
+      <p style="color: #9ca3af; text-align: center; margin-top: 2rem;">
+        No tienes rentas registradas por el momento.
+      </p>
+      {% endif %}
     </section>
-</main>
+  </main>
 
-<script>
-// Dropdown usuario (mismo código que en las otras páginas)
-document.addEventListener('click', function (e) {
-    const toggle = document.querySelector('.user-menu-toggle');
-    const dropdown = document.querySelector('.user-menu-dropdown');
+  <script>
+    // Dropdown usuario (mismo código que en las otras páginas)
+    document.addEventListener('click', function (e) {
+      const toggle = document.querySelector('.user-menu-toggle');
+      const dropdown = document.querySelector('.user-menu-dropdown');
 
-    if (!toggle || !dropdown) return;
+      if (!toggle || !dropdown) return;
 
-    if (toggle.contains(e.target)) {
+      if (toggle.contains(e.target)) {
         const isVisible = dropdown.style.display === 'block';
         dropdown.style.display = isVisible ? 'none' : 'block';
-    } else if (!dropdown.contains(e.target)) {
+      } else if (!dropdown.contains(e.target)) {
         dropdown.style.display = 'none';
-    }
-});
-</script>
+      }
+    });
+  </script>
 </body>
+
 </html>

@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="utf-8" />
   <title>Agregar tarjeta</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
   <meta name="viewport" content="width=device-width,initial-scale=1">
 </head>
+
 <body>
   <main class="main-content">
     <section class="login-page">
@@ -14,25 +16,30 @@
           <h2 class="card-title">Agregar tarjeta</h2>
 
           <form method="post" action="{{ url_for('tarjeta_agregar', next=request.args.get('next')) }}" novalidate>
+            <input type="hidden" name="next" value="{{ request.args.get('next') }}">
             <div class="form-field">
               <label><span>Nombre del titular</span></label>
-              <input type="text" name="titular" required maxlength="200" placeholder="Nombre tal como aparece en la tarjeta">
+              <input type="text" name="titular" required maxlength="200"
+                placeholder="Nombre tal como aparece en la tarjeta">
             </div>
 
             <div class="form-field">
               <label><span>Número de tarjeta</span></label>
-              <input id="card-number" type="text" name="numero" inputmode="numeric" placeholder="XXXX XXXX XXXX XXXX" required maxlength="25" autocomplete="cc-number">
+              <input id="card-number" type="text" name="numero" inputmode="numeric" placeholder="XXXX XXXX XXXX XXXX"
+                required maxlength="25" autocomplete="cc-number">
             </div>
 
             <div style="display:flex; gap:10px;">
               <div class="form-field" style="flex:1;">
                 <label><span>Fecha expiración (MM/YY)</span></label>
-                <input id="card-exp" type="text" name="expiry" placeholder="MM/YY" required maxlength="5" autocomplete="cc-exp">
+                <input id="card-exp" type="text" name="expiry" placeholder="MM/YY" required maxlength="5"
+                  autocomplete="cc-exp">
               </div>
 
               <div class="form-field" style="flex:1;">
                 <label><span>CVV (no se guardará)</span></label>
-                <input id="card-cvv" type="password" name="cvv" required maxlength="4" placeholder="CVV" autocomplete="cc-csc">
+                <input id="card-cvv" type="password" name="cvv" required maxlength="4" placeholder="CVV"
+                  autocomplete="cc-csc">
               </div>
             </div>
 
@@ -53,34 +60,37 @@
               </div>
             </div>
 
-            <p class="save-note">Al marcar "Guardar tarjeta" guardamos solo datos no sensibles (simulación). No almacenamos CVV.</p>
+            <p class="save-note">Al marcar "Guardar tarjeta" guardamos solo datos no sensibles (simulación). No
+              almacenamos CVV.</p>
           </form>
 
           <!-- Lista de tarjetas guardadas (si existen) -->
           {% if tarjetas %}
-            <h3 class="card-title" style="margin-top:18px;">Tarjetas guardadas</h3>
-            <div class="saved-cards">
-              {% for t in tarjetas %}
-                <div class="saved-card">
-                  <div class="card-left">
-                    <div class="card-chip">{{ (t.brand[:1] if t.brand else '●')|upper }}</div>
-                    <div class="card-meta">
-                      <div class="card-name">{{ t.nombre }}</div>
-                      <div class="card-last4">**** **** **** {{ t.last4 }} · Exp {{ t.expiry }}</div>
-                    </div>
-                  </div>
-
-                  <div class="card-actions">
-                    <input type="radio" id="card_{{ t.id }}" name="tarjeta_id" value="{{ t.id }}" {% if loop.first %}checked{% endif %}>
-                    <label for="card_{{ t.id }}" class="select-btn">Usar</label>
-
-                    <form method="post" action="{{ url_for('tarjeta_eliminar', id=t.id) }}" onsubmit="return confirm('Eliminar tarjeta?');" style="display:inline;">
-                      <button type="submit">Eliminar</button>
-                    </form>
-                  </div>
+          <h3 class="card-title" style="margin-top:18px;">Tarjetas guardadas</h3>
+          <div class="saved-cards">
+            {% for t in tarjetas %}
+            <div class="saved-card">
+              <div class="card-left">
+                <div class="card-chip">{{ (t.brand[:1] if t.brand else '●')|upper }}</div>
+                <div class="card-meta">
+                  <div class="card-name">{{ t.nombre }}</div>
+                  <div class="card-last4">**** **** **** {{ t.last4 }} · Exp {{ t.expiry }}</div>
                 </div>
-              {% endfor %}
+              </div>
+
+              <div class="card-actions">
+                <input type="radio" id="card_{{ t.id }}" name="tarjeta_id" value="{{ t.id }}" {% if loop.first
+                  %}checked{% endif %}>
+                <label for="card_{{ t.id }}" class="select-btn">Usar</label>
+
+                <form method="post" action="{{ url_for('tarjeta_eliminar', id=t.id) }}"
+                  onsubmit="return confirm('Eliminar tarjeta?');" style="display:inline;">
+                  <button type="submit">Eliminar</button>
+                </form>
+              </div>
             </div>
+            {% endfor %}
+          </div>
           {% endif %}
 
           <p style="margin-top:14px;">
@@ -93,26 +103,27 @@
 
   <script>
     // Formato simple para el número de tarjeta (espaciado)
-    (function(){
+    (function () {
       const input = document.getElementById('card-number');
       if (!input) return;
       input.addEventListener('input', (e) => {
-        let v = e.target.value.replace(/\D/g,'').slice(0,16);
+        let v = e.target.value.replace(/\D/g, '').slice(0, 16);
         let parts = v.match(/.{1,4}/g);
         e.target.value = parts ? parts.join(' ') : v;
       });
     })();
 
     // Mask en expiry (MM/YY)
-    (function(){
+    (function () {
       const exp = document.getElementById('card-exp');
       if (!exp) return;
       exp.addEventListener('input', (e) => {
-        let v = e.target.value.replace(/\D/g,'').slice(0,4);
-        if (v.length >= 3) v = v.slice(0,2) + '/' + v.slice(2);
+        let v = e.target.value.replace(/\D/g, '').slice(0, 4);
+        if (v.length >= 3) v = v.slice(0, 2) + '/' + v.slice(2);
         e.target.value = v;
       });
     })();
   </script>
 </body>
+
 </html>

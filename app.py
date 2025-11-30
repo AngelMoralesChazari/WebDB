@@ -264,16 +264,13 @@ def rentar_pelicula(movie_id):
         return redirect(url_for("login"))
 
     if request.method == "GET":
-        # Mostrar formulario: verificar si tiene tarjetas guardadas
         tarjetas = obtener_tarjetas_por_usuario(usuario_id)
         if not tarjetas or len(tarjetas) == 0:
-            # Redirigir para agregar tarjeta y volver a rentar después
             flash("Necesitas registrar una tarjeta antes de rentar.")
             return redirect(url_for("tarjeta_agregar", next=url_for("rentar_pelicula", movie_id=movie_id)))
-        # Mostrar formulario con selección de tarjeta
         return render_template("rentar.html", movie_id=movie_id, tarjetas=tarjetas, dias=3, monto=50.00)
 
-    # POST: procesar pago simulado, requiere tarjeta_id
+    # POST
     tarjeta_id = request.form.get("tarjeta_id")
     if not tarjeta_id:
         flash("Selecciona una tarjeta para pagar.")
@@ -290,18 +287,15 @@ def rentar_pelicula(movie_id):
         flash("Tarjeta inválida.")
         return redirect(url_for("rentar_pelicula", movie_id=movie_id))
 
-    # Simular verificación de expiración
     now = datetime.now()
-    if tarjeta.get("expiry_year") < now.year or (
-        tarjeta.get("expiry_year") == now.year and tarjeta.get("expiry_month") < now.month
-    ):
+    if tarjeta.get("expiry_year") < now.year or (tarjeta.get("expiry_year") == now.year and tarjeta.get("expiry_month") < now.month):
         flash("La tarjeta seleccionada está vencida.")
         return redirect(url_for("rentar_pelicula", movie_id=movie_id))
 
-    # Simular cobro exitoso y crear la renta
     dias = 3
     monto = 50.00
-    ok = crear_renta(usuario_id=usuario_id, movie_id=movie_id, dias=dias, monto=monto)
+
+    ok, renta_id = crear_renta(usuario_id=usuario_id, movie_id=movie_id, dias=dias, monto=monto)
     if not ok:
         flash("Ocurrió un error al crear la renta. Inténtalo más tarde.")
         return redirect(url_for("detalle_pelicula", movie_id=movie_id))

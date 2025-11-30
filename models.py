@@ -1,3 +1,4 @@
+
 from db import get_connection
 from datetime import datetime, timedelta
 import hashlib
@@ -429,50 +430,55 @@ def buscar_peliculas(texto=None, genero=None, anio=None, limit=50):
 
 def crear_renta(usuario_id, movie_id, dias=3, monto=None):
     """
-    Crea un registro de renta para un usuario y una película.
-    - Por defecto dura 3 días.
-    - Máximo 5 días.
+    Crea un registro de renta y devuelve (True, renta_id) si todo OK,
+    o (False, None) en caso de error.
     """
+    from datetime import datetime, timedelta
+
     if dias < 1 or dias > 5:
         print("Error: El número de días debe estar entre 1 y 5.")
-        return False
+        return False, None
 
     conn = get_connection()
     if not conn:
         print("=== No se pudo obtener la conexión en crear_renta ===")
-        return False
+        return False, None
 
-    from datetime import datetime, timedelta
     fecha_inicio = datetime.now()
     fecha_devolucion = fecha_inicio + timedelta(days=dias)
     estatus = "Activa"
 
-    query = """
-    BEGIN TRANSACTION;
-    INSERT INTO dbo.Rentas (Usuario_ID, Movie_ID, FechaInicio, FechaDevolucion, Estatus, Monto)
-    VALUES (?, ?, ?, ?, ?, ?);
-    COMMIT;
-    """
-
     try:
         cursor = conn.cursor()
-        cursor.execute(query, (
-            usuario_id,
-            movie_id,
-            fecha_inicio,
-            fecha_devolucion,
-            estatus,
-            monto
-        ))
+        insert_sql = """
+        INSERT INTO dbo.Rentas (Usuario_ID, Movie_ID, FechaInicio, FechaDevolucion, Estatus, Monto)
+        VALUES (?, ?, ?, ?, ?, ?);
+        """
+        cursor.execute(insert_sql, (usuario_id, movie_id, fecha_inicio, fecha_devolucion, estatus, monto))
         conn.commit()
-        print(f">>> Renta creada: Usuario {usuario_id}, Película {movie_id}, Días {dias}")
-        return True
+
+        # Obtener id insertado (SCOPE_IDENTITY)
+        cursor.execute("SELECT SCOPE_IDENTITY() AS id;")
+        row = cursor.fetchone()
+        new_id = row[0] if row and len(row) > 0 else None
+
+        print(f"DEBUG crear_renta: insert ok. nuevo id = {new_id} usuario={usuario_id} movie={movie_id} monto={monto}")
+        if new_id is not None:
+            return True, int(new_id)
+        else:
+            return True, None
     except Exception as e:
         print(f"Error al crear renta: {e}")
-        conn.rollback()
-        return False
+        try:
+            conn.rollback()
+        except:
+            pass
+        return False, None
     finally:
-        conn.close()
+        try:
+            conn.close()
+        except:
+            pass
 
 def actualizar_estado_renta(renta_id, nuevo_estatus, usuario_id=None):
     """
