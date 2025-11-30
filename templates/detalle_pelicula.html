@@ -79,26 +79,22 @@
                         </p>
                         <div class="detalle-inline-buttons">
                             <button class="btn-primary btn-lg">▶ Reproducir</button>
-
                             {% if session.get('usuario_id') %}
-                                {% if rentada %}
-                                    <button class="btn-secondary btn-lg"
-                                            style="background:#16a34a; border:1px solid #4ade80; color:#f9fafb;">
-                                        ✔ Rentada
-                                    </button>
-                                {% else %}
-                                    <a href="{{ url_for('rentar_pelicula', movie_id=pelicula.id) }}"
-                                       class="btn-secondary btn-lg">
-                                        💳 Rentar
-                                    </a>
-                                {% endif %}
+                            {% if rentada %}
+                            <span class="status-badge status-active" style="margin-left: 1rem;">Ya rentada</span>
+                            <!-- Opcional: Botón para ir a devolver desde aquí, aunque es mejor desde "Mi cuenta" -->
+                            <a href="{{ url_for('cuenta') }}" class="btn-secondary btn-lg" style="margin-left: 1rem;">Ir
+                                a Mi Cuenta</a>
                             {% else %}
-                                <a href="{{ url_for('login') }}" class="btn-secondary btn-lg">
-                                    Inicia sesión para rentar
-                                </a>
+                            <a href="{{ url_for('rentar_pelicula', movie_id=pelicula.id) }}" class="btn-primary btn-lg"
+                                style="margin-left: 1rem;">Rentar Película</a>
                             {% endif %}
-
-                            <a href="{{ url_for('peliculas') }}" class="btn-secondary btn-lg">← Volver</a>
+                            {% else %}
+                            <a href="{{ url_for('login') }}" class="btn-secondary btn-lg"
+                                style="margin-left: 1rem;">Iniciar sesión para rentar</a>
+                            {% endif %}
+                            <a href="{{ url_for('peliculas') }}" class="btn-secondary btn-lg"
+                                style="margin-left: 1rem;">← Volver</a>
                         </div>
                     </div>
 
