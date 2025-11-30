@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Pelis - UAGRO | Sistema de rentas</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+
+<body>
+    <!-- MISMO HEADER QUE EN INDEX / PELICULAS -->
+    <header class="site-header">
+        <div class="logo-area">
+            <span class="logo-icon">🦅</span>
+            <span class="logo-text">Pelis - UAGRO</span>
+        </div>
+
+        <nav class="main-nav">
+            <a href="{{ url_for('home') }}" class="nav-link">Inicio</a>
+            <a href="{{ url_for('peliculas') }}" class="nav-link">Películas</a>
+            <a href="{{ url_for('cuenta') }}" class="nav-link">Mi cuenta</a>
+        </nav>
+
+        <div class="user-area">
+            {% if session.get('usuario_nombre') %}
+            {% set primer_nombre = session['usuario_nombre'].split(' ')[0] %}
+            <div class="user-menu">
+                <button class="btn-login user-menu-toggle">
+                    {{ primer_nombre }}
+                </button>
+                <div class="user-menu-dropdown">
+                    <a href="{{ url_for('cuenta') }}">Configuración</a>
+                    <a href="{{ url_for('logout') }}">Cerrar sesión</a>
+                </div>
+            </div>
+            {% else %}
+            <a href="{{ url_for('login') }}" class="btn-login">Iniciar sesión</a>
+            {% endif %}
+        </div>
+    </header>
+
+    <main class="main-content peliculas-page">
+        <section class="row-header">
+            <h1 class="row-title">Sistema de rentas</h1>
+            <p class="row-subtitle">
+                Aquí puedes ver el estado de tus rentas actuales y pasadas.
+            </p>
+        </section>
+
+        {% if rentas %}
+        <div class="movies-grid">
+            {% for r in rentas %}
+            <article class="movie-card-grid">
+                <div class="movie-poster-wrapper">
+                    <div class="movie-poster"
+                        style="{% if r.poster %}background-image: url('{{ r.poster }}');{% endif %}">
+                    </div>
+                </div>
+                <div class="movie-info">
+                    <h3 class="movie-title">{{ r.titulo }}</h3>
+
+                    <p class="movie-meta">
+                        Inicio: {{ r.fecha_inicio.strftime('%Y-%m-%d') }}<br>
+                        Devolución: {{ r.fecha_devolucion.strftime('%Y-%m-%d') if r.fecha_devolucion }}<br>
+                        Estatus:
+                        {% if r.estatus == 'Atrasada' %}
+                        <span style="color:#f87171; font-weight:600;">{{ r.estatus }}</span>
+                        {% elif r.estatus == 'Completada' %}
+                        <span style="color:#4ade80; font-weight:600;">{{ r.estatus }}</span>
+                        {% else %}
+                        <span style="color:#fde68a; font-weight:600;">{{ r.estatus }}</span>
+                        {% endif %}
+                    </p>
+
+                    {% if r.monto %}
+                    <p class="movie-votes">
+                        Monto: ${{ '%.2f'|format(r.monto) }} MXN
+                    </p>
+                    {% endif %}
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p style="color: #9ca3af; text-align: center; margin-top: 2rem;">
+            No tienes rentas registradas por el momento.
+        </p>
+        {% endif %}
+
+    </main>
+
+    <script>
+        // Dropdown usuario (igual que en las otras páginas)
+        document.addEventListener('click', function (e) {
+            const toggle = document.querySelector('.user-menu-toggle');
+            const dropdown = document.querySelector('.user-menu-dropdown');
+
+            if (!toggle || !dropdown) return;
+
+            if (toggle.contains(e.target)) {
+                const isVisible = dropdown.style.display === 'block';
+                dropdown.style.display = isVisible ? 'none' : 'block';
+            } else if (!dropdown.contains(e.target)) {
+                dropdown.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+
+</html>

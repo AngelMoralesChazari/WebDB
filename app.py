@@ -8,8 +8,10 @@ from models import (
     obtener_usuario_por_email,
     buscar_peliculas,
     obtener_recomendadas_por_genero,
-    obtener_peliculas,        # <-- nuevo
-    contar_peliculas
+    contar_peliculas,
+    crear_renta,                # <-- nuevo
+    obtener_rentas_por_usuario,  # <-- nuevo
+    tiene_renta_activa,
 )
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -97,10 +99,16 @@ def detalle_pelicula(movie_id):
         limit=12
     )
 
+    usuario_id = session.get("usuario_id")
+    rentada = False
+    if usuario_id:
+        rentada = tiene_renta_activa(usuario_id, movie_id)
+
     return render_template(
         "detalle_pelicula.html",
         pelicula=pelicula,
-        recomendadas=recomendadas
+        recomendadas=recomendadas,
+        rentada=rentada
     )
 
 
@@ -157,6 +165,38 @@ def logout():
     session.pop("usuario_nombre", None)
     return redirect(url_for("home"))
 
+
+# ==== NUEVAS RUTAS DE RENTAS ====
+
+@app.route("/rentas")
+def sistema_rentas():
+    usuario_id = session.get("usuario_id")
+    if not usuario_id:
+        flash("Debes iniciar sesión para ver tus rentas.")
+        return redirect(url_for("login"))
+
+    rentas = obtener_rentas_por_usuario(usuario_id)
+    return render_template("rentas.html", rentas=rentas)
+
+
+@app.route("/rentar/<int:movie_id>")
+def rentar_pelicula(movie_id):
+    usuario_id = session.get("usuario_id")
+    if not usuario_id:
+        flash("Debes iniciar sesión para rentar una película.")
+        return redirect(url_for("login"))
+
+    ok = crear_renta(usuario_id=usuario_id, movie_id=movie_id, dias=3, monto=50.00)
+
+    if not ok:
+        flash("Ocurrió un error al crear la renta. Inténtalo más tarde.")
+        return redirect(url_for("detalle_pelicula", movie_id=movie_id))
+
+    flash("¡Renta creada correctamente!")
+    # >>> En lugar de ir al sistema de rentas, volvemos al detalle
+    return redirect(url_for("detalle_pelicula", movie_id=movie_id))
+
+# ==== API ====
 
 @app.route("/api/pelicula/<int:movie_id>")
 def api_pelicula(movie_id):

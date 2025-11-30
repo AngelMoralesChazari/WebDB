@@ -1,5 +1,5 @@
 from db import get_connection
-
+from datetime import datetime, timedelta
 
 def obtener_peliculas(busqueda=None, genero=None, anio=None, limit=20, offset=0):
     conn = get_connection()
@@ -423,3 +423,137 @@ def buscar_peliculas(texto=None, genero=None, anio=None, limit=50):
         conn.close()
 
     return peliculas
+
+# ==== RENTAS ====
+
+def crear_renta(usuario_id, movie_id, dias=3, monto=None):
+    """
+    Crea un registro de renta para un usuario y una película.
+    Por defecto dura 3 días.
+    """
+    conn = get_connection()
+    if not conn:
+        print("=== No se pudo obtener la conexión en crear_renta ===")
+        return False
+
+    fecha_inicio = datetime.now()
+    fecha_devolucion = fecha_inicio + timedelta(days=dias)
+    estatus = "Activa"   # usaremos este estatus al crear
+
+    query = """
+    INSERT INTO dbo.Rentas (Usuario_ID, Movie_ID, FechaInicio, FechaDevolucion, Estatus, Monto)
+    VALUES (?, ?, ?, ?, ?, ?);
+    """
+
+    try:
+        cursor = conn.cursor()
+        cursor.execute(
+            query,
+            (
+                usuario_id,
+                movie_id,
+                fecha_inicio,
+                fecha_devolucion,
+                estatus,
+                monto,
+            ),
+        )
+        conn.commit()
+        return True
+    except Exception as e:
+        print(f"Error al crear renta: {e}")
+        return False
+    finally:
+        conn.close()
+
+
+def obtener_rentas_por_usuario(usuario_id):
+    """
+    Devuelve todas las rentas de un usuario, con info básica de la película.
+    """
+    conn = get_connection()
+    if not conn:
+        print("=== No se pudo obtener la conexión en obtener_rentas_por_usuario ===")
+        return []
+
+    query = """
+    SELECT
+        r.Renta_ID,
+        r.FechaInicio,
+        r.FechaDevolucion,
+        r.Estatus,
+        r.Monto,
+        m.Movie_ID,
+        m.Title,
+        m.Poster_Url
+    FROM dbo.Rentas r
+    INNER JOIN dbo.mymoviedb m ON r.Movie_ID = m.Movie_ID
+    WHERE r.Usuario_ID = ?
+    ORDER BY r.FechaInicio DESC;
+    """
+
+    rentas = []
+    try:
+        cursor = conn.cursor()
+        cursor.execute(query, (usuario_id,))
+        rows = cursor.fetchall()
+
+        for row in rows:
+            fecha_devolucion = row.FechaDevolucion
+            estatus_bd = row.Estatus
+
+            # Cálculo de estatus "dinámico"
+            if estatus_bd == "Completada":
+                estatus_mostrado = "Completada"
+            else:
+                ahora = datetime.now()
+                if fecha_devolucion and ahora > fecha_devolucion:
+                    estatus_mostrado = "Atrasada"
+                else:
+                    estatus_mostrado = "A tiempo"
+
+            rentas.append({
+                "renta_id": row.Renta_ID,
+                "fecha_inicio": row.FechaInicio,
+                "fecha_devolucion": fecha_devolucion,
+                "estatus": estatus_mostrado,
+                "monto": row.Monto,
+                "movie_id": row.Movie_ID,
+                "titulo": row.Title,
+                "poster": row.Poster_Url,
+            })
+    except Exception as e:
+        print(f"Error al obtener rentas por usuario: {e}")
+    finally:
+        conn.close()
+
+    return rentas
+
+def tiene_renta_activa(usuario_id, movie_id):
+    """
+    Devuelve True si el usuario tiene una renta activa de esa película.
+    Para simplificar, consideramos activa si Estatus <> 'Completada' y <> 'Cancelada'.
+    """
+    conn = get_connection()
+    if not conn:
+        print("=== No se pudo obtener la conexión en tiene_renta_activa ===")
+        return False
+
+    query = """
+    SELECT COUNT(*)
+    FROM dbo.Rentas
+    WHERE Usuario_ID = ?
+      AND Movie_ID = ?
+      AND Estatus NOT IN ('Completada', 'Cancelada');
+    """
+
+    try:
+        cursor = conn.cursor()
+        cursor.execute(query, (usuario_id, movie_id))
+        count = cursor.fetchone()[0]
+        return count > 0
+    except Exception as e:
+        print(f"Error en tiene_renta_activa: {e}")
+        return False
+    finally:
+        conn.close()

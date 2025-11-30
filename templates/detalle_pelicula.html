@@ -65,27 +65,46 @@
                             <span class="detalle-inline-rating">
                                 ⭐
                                 {% if pelicula.promedio %}
-                                    {{ pelicula.promedio|float|round(1) }}/10
+                                {{ pelicula.promedio|float|round(1) }}/10
                                 {% else %}
-                                    N/A
+                                N/A
                                 {% endif %}
                                 <span class="detalle-inline-votes">
                                     ({{ pelicula.votos }} votos)
                                 </span>
                             </span>
                             {% if pelicula.idioma %}
-                                <br>Idioma original: {{ pelicula.idioma }}
+                            <br>Idioma original: {{ pelicula.idioma }}
                             {% endif %}
                         </p>
                         <div class="detalle-inline-buttons">
                             <button class="btn-primary btn-lg">▶ Reproducir</button>
+
+                            {% if session.get('usuario_id') %}
+                                {% if rentada %}
+                                    <button class="btn-secondary btn-lg"
+                                            style="background:#16a34a; border:1px solid #4ade80; color:#f9fafb;">
+                                        ✔ Rentada
+                                    </button>
+                                {% else %}
+                                    <a href="{{ url_for('rentar_pelicula', movie_id=pelicula.id) }}"
+                                       class="btn-secondary btn-lg">
+                                        💳 Rentar
+                                    </a>
+                                {% endif %}
+                            {% else %}
+                                <a href="{{ url_for('login') }}" class="btn-secondary btn-lg">
+                                    Inicia sesión para rentar
+                                </a>
+                            {% endif %}
+
                             <a href="{{ url_for('peliculas') }}" class="btn-secondary btn-lg">← Volver</a>
                         </div>
                     </div>
 
                     <div class="detalle-inline-poster-wrapper">
                         <div class="detalle-inline-poster"
-                             style="{% if pelicula.poster %}background-image: url('{{ pelicula.poster }}');{% endif %}">
+                            style="{% if pelicula.poster %}background-image: url('{{ pelicula.poster }}');{% endif %}">
                         </div>
                     </div>
                 </div>
@@ -117,7 +136,7 @@
                     <article class="movie-card-grid">
                         <div class="movie-poster-wrapper">
                             <div class="movie-poster"
-                                 style="{% if rec.poster %}background-image: url('{{ rec.poster }}');{% endif %}">
+                                style="{% if rec.poster %}background-image: url('{{ rec.poster }}');{% endif %}">
                             </div>
                         </div>
                         <div class="movie-info">
@@ -128,9 +147,9 @@
                                     <span class="movie-rating-star">★</span>
                                     <span class="movie-rating-score">
                                         {% if rec.promedio %}
-                                            {{ rec.promedio|float|round(1) }}/10
+                                        {{ rec.promedio|float|round(1) }}/10
                                         {% else %}
-                                            N/A
+                                        N/A
                                         {% endif %}
                                     </span>
                                 </div>
