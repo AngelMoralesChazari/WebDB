@@ -1,66 +1,75 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-    <meta charset="UTF-8" />
-    <title>Rentar Película - Pago Simulado</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+  <meta charset="UTF-8" />
+  <title>Rentar Película - Pago Simulado</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
 </head>
+
 <body>
-<header class="site-header">
+  <header class="site-header">
     <div class="logo-area">
-        <span class="logo-icon">🦅</span>
-        <span class="logo-text">Pelis - UAGRO</span>
+      <span class="logo-icon">🦅</span>
+      <span class="logo-text">Pelis - UAGRO</span>
     </div>
     <nav class="main-nav">
-        <a href="{{ url_for('home') }}" class="nav-link">Inicio</a>
-        <a href="{{ url_for('peliculas') }}" class="nav-link">Películas</a>
-        <a href="{{ url_for('cuenta') }}" class="nav-link">Mi cuenta</a>
+      <a href="{{ url_for('home') }}" class="nav-link">Inicio</a>
+      <a href="{{ url_for('peliculas') }}" class="nav-link">Películas</a>
+      <a href="{{ url_for('cuenta') }}" class="nav-link">Mi cuenta</a>
     </nav>
-</header>
+  </header>
 
-<main class="main-content" style="padding: 2rem 4rem;">
+  <main class="main-content rentar-page" style="padding: 2rem 4rem;">
     <h1>Rentar Película (Pago Simulado)</h1>
-    <p>Vas a rentar la película con ID: <strong>{{ movie_id }}</strong></p>
-    <p>Días de renta: <strong>{{ dias }}</strong></p>
-    <p>Monto a pagar: <strong>${{ '%.2f'|format(monto) }} MXN</strong></p>
 
-    <!-- Mensajes flash -->
-    {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        <div class="flashes" style="margin:1rem 0; color:#fff; background:#f97316; padding:0.6rem 1rem; border-radius:6px;">
-          {% for m in messages %}
-            <div>{{ m }}</div>
-          {% endfor %}
-        </div>
-      {% endif %}
-    {% endwith %}
+    <div class="rentar-container">
+      <!-- IZQUIERDA: info y formulario -->
+      <div class="rentar-info">
+        <p>Vas a rentar la película con ID: <strong>{{ movie_id }}</strong></p>
+        <p>Días de renta: <strong>{{ dias }}</strong></p>
+        <p>Monto a pagar: <strong>${{ '%.2f'|format(monto) }} MXN</strong></p>
 
-    {% if tarjetas and tarjetas|length > 0 %}
-      <form method="post" action="{{ url_for('rentar_pelicula', movie_id=movie_id) }}">
-        <label for="tarjeta_id" style="display:block; margin:0.5rem 0 0.25rem;">Selecciona tarjeta para pagar</label>
-        <select name="tarjeta_id" id="tarjeta_id" required style="padding:0.5rem; border-radius:6px;">
-          {% for t in tarjetas %}
-            <option value="{{ t.tarjeta_id }}">
-              **** **** **** {{ t.last4 }} — {{ t.titular }} ({{ t.expiry_month }} / {{ t.expiry_year }})
-            </option>
-          {% endfor %}
-        </select>
+        {% if tarjetas and tarjetas|length > 0 %}
+        <form method="post" action="{{ url_for('rentar_pelicula', movie_id=movie_id) }}" class="rentar-form">
+          <label for="tarjeta_id" class="rentar-label">Selecciona tarjeta para pagar</label>
 
-        <!-- Enviamos dias y monto por si el backend los espera desde el form -->
-        <input type="hidden" name="dias" value="{{ dias }}">
-        <input type="hidden" name="monto" value="{{ monto }}">
+          <div class="select-wrap">
+            <select name="tarjeta_id" id="tarjeta_id" required>
+              {% for t in tarjetas %}
+              <option value="{{ t.tarjeta_id }}">
+                **** **** **** {{ t.last4 }} — {{ t.titular }} ({{ t.expiry_month }} / {{ t.expiry_year }})
+              </option>
+              {% endfor %}
+            </select>
+          </div>
 
-        <div style="margin-top:1rem;">
-          <button type="submit" class="btn-primary btn-lg">Confirmar Pago y Rentar</button>
-          <a href="{{ url_for('detalle_pelicula', movie_id=movie_id) }}"
-             class="btn-secondary btn-lg" style="margin-left: 1rem;">Cancelar</a>
-        </div>
-      </form>
-    {% else %}
-      <p style="margin-top:1rem; color:#9ca3af;">
-        No tienes tarjetas registradas. <a href="{{ url_for('tarjeta_agregar', next=url_for('rentar_pelicula', movie_id=movie_id)) }}">Agrega una tarjeta</a> para poder pagar.
-      </p>
-    {% endif %}
-</main>
+          <!-- Enviamos dias y monto por si el backend los espera desde el form -->
+          <input type="hidden" name="dias" value="{{ dias }}">
+          <input type="hidden" name="monto" value="{{ monto }}">
+
+          <div class="rentar-actions">
+            <button type="submit" class="btn-primary btn-lg">Confirmar Pago y Rentar</button>
+            <a href="{{ url_for('detalle_pelicula', movie_id=movie_id) }}" class="btn-secondary btn-lg">Cancelar</a>
+          </div>
+        </form>
+        {% else %}
+        <p style="margin-top:1rem; color:#9ca3af;">
+          No tienes tarjetas registradas. <a
+            href="{{ url_for('tarjeta_agregar', next=url_for('rentar_pelicula', movie_id=movie_id)) }}">Agrega una
+            tarjeta</a> para poder pagar.
+        </p>
+        {% endif %}
+      </div>
+
+      <!-- DERECHA: poster -->
+      <div class="rentar-poster">
+        <img src="{{ poster_url or url_for('static', filename='imagenes/default_poster.jpg') }}"
+          alt="Poster de la película" loading="lazy"
+          onerror="this.onerror=null; this.src='{{ url_for('static', filename='imagenes/default_poster.jpg') }}'; this.classList.add('img-fallback');" />
+      </div>
+    </div>
+  </main>
 </body>
+
 </html>

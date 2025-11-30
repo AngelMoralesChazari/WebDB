@@ -1668,3 +1668,408 @@ body {
     gap: 6px;
   }
 }
+
+
+/* === Estilos Scoped para /rentar === */
+.rentar-page .rentar-container {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+  max-width: 1100px;
+  margin-top: 1rem;
+}
+
+/* IZQUIERDA - info */
+.rentar-page .rentar-info {
+  flex: 1 1 0;
+  min-width: 260px;
+}
+
+/* Form y label */
+.rentar-page .rentar-label {
+  display: block;
+  margin: 0.6rem 0 0.35rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+/* Wrapper del select para la flecha */
+.rentar-page .select-wrap {
+  position: relative;
+  max-width: 700px;
+}
+
+/* Select estilizado (específico) */
+.rentar-page select#tarjeta_id {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 100%;
+  padding: 0.78rem 1rem;
+  padding-right: 2.8rem;
+  border-radius: 12px;
+  border: 1px solid rgba(148,163,184,0.12);
+  background: linear-gradient(180deg, rgba(11,17,32,0.96), rgba(7,10,22,0.88));
+  color: var(--text);
+  font-size: 1rem;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.55);
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.12s ease;
+}
+
+/* Flecha personalizada */
+.rentar-page .select-wrap::after{
+  content: "";
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-top: 8px solid rgba(226,229,231,0.95);
+  pointer-events: none;
+}
+
+/* Focus */
+.rentar-page select#tarjeta_id:focus {
+  outline: none;
+  border-color: rgba(239,68,68,0.95);
+  box-shadow: 0 8px 20px rgba(239,68,68,0.06);
+  transform: translateY(-1px);
+}
+
+/* Botones y contenedor acciones */
+.rentar-page .rentar-actions {
+  margin-top: 1.3rem;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+/* Botones override solo dentro de rentar */
+.rentar-page .btn-primary {
+  background: linear-gradient(90deg, #ef4444 0%, #f97316 100%);
+  color: #fff;
+  padding: 0.68rem 1.4rem;
+  border-radius: 999px;
+  box-shadow: 0 10px 28px rgba(239,68,68,0.12);
+  border: none;
+  font-weight: 700;
+}
+
+.rentar-page .btn-primary:hover { transform: translateY(-2px); filter: brightness(0.98); }
+
+.rentar-page .btn-secondary {
+  background: transparent;
+  border: 2px solid rgba(99,102,241,0.12);
+  color: var(--accent);
+  padding: 0.6rem 1rem;
+  border-radius: 999px;
+  text-decoration: none;
+}
+
+/* DERECHA - poster */
+.rentar-page .rentar-poster {
+  flex: 0 0 320px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 18px 40px rgba(0,0,0,0.7);
+  align-self: flex-start;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.05));
+}
+
+/* Imagen */
+.rentar-page .rentar-poster img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+/* Ocultar mensajes flash solo en esta página (si quedan) */
+.rentar-page .flashes { display: none !important; }
+
+/* Responsive */
+@media (max-width: 900px) {
+  .rentar-page .rentar-container { flex-direction: column-reverse; gap: 1.25rem; }
+  .rentar-page .rentar-poster { width: 100%; flex: 0 0 auto; }
+  .rentar-page .rentar-actions { flex-direction: column; align-items: stretch; }
+  .rentar-page .rentar-actions .btn-secondary { width: 100%; text-align: center; }
+}
+
+/* ===== Mejoras visuales solo para /rentar (scopeado) ===== */
+.rentar-page {
+  /* pequeño extra para separar del fondo y dar espacio */
+  padding: 2.25rem 4rem;
+  --rentar-panel-bg: rgba(8, 10, 18, 0.45);
+  --rentar-panel-border: linear-gradient(90deg, rgba(239,68,68,0.22), rgba(249,115,22,0.14));
+}
+
+/* Contenedor general: tarjeta glass */
+.rentar-page .rentar-container {
+  display: flex;
+  gap: 2.4rem;
+  align-items: flex-start;
+  max-width: 1200px;
+  margin-top: 1.25rem;
+  margin-left: 0;
+  padding: 1.4rem;
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(7,9,15,0.40), rgba(7,9,15,0.25));
+  border: 1px solid rgba(255,255,255,0.03);
+  box-shadow: 0 20px 50px rgba(2,6,23,0.65), inset 0 1px 0 rgba(255,255,255,0.02);
+  backdrop-filter: blur(6px) saturate(120%);
+  transition: transform 220ms ease, box-shadow 220ms ease;
+}
+
+/* pequeño efecto hover del panel */
+.rentar-page .rentar-container:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 30px 70px rgba(2,6,23,0.75);
+}
+
+/* IZQUIERDA - panel de información con separación y estilo */
+.rentar-page .rentar-info {
+  flex: 1 1 0;
+  min-width: 300px;
+  padding: 1.4rem 1.6rem;
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border: 1px solid rgba(148,163,184,0.04);
+  box-shadow: 0 12px 28px rgba(3,7,18,0.6);
+}
+
+/* Titular más elegante */
+.rentar-page .rentar-info h1,
+.rentar-page h1 {
+  font-size: 1.8rem;
+  margin-bottom: 0.6rem;
+  color: #fff;
+  letter-spacing: -0.3px;
+  text-shadow: 0 6px 18px rgba(0,0,0,0.6);
+}
+
+/* Datos clave (ID, dias, monto) */
+.rentar-page .rentar-info p {
+  color: rgba(230,230,235,0.92);
+  font-size: 0.98rem;
+  margin-bottom: 0.45rem;
+}
+
+.rentar-page .rentar-info p strong {
+  color: #fff;
+  font-weight: 800;
+}
+
+/* Select mejorado (tarjeta) */
+.rentar-page .select-wrap {
+  position: relative;
+  max-width: 720px;
+  margin-top: 0.6rem;
+}
+
+/* icono izquierdo pseudo (chip/tarjeta) */
+.rentar-page .select-wrap::before {
+  content: "💳";
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.05rem;
+  pointer-events: none;
+  opacity: 0.95;
+  filter: drop-shadow(0 3px 8px rgba(0,0,0,0.45));
+}
+
+/* select: look moderno tipo tarjeta */
+.rentar-page select#tarjeta_id {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 100%;
+  padding: 0.9rem 3.4rem 0.9rem 3.4rem; /* espacio para icono y flecha */
+  border-radius: 12px;
+  border: 1px solid rgba(148,163,184,0.09);
+  background: linear-gradient(180deg, rgba(8,12,20,0.7), rgba(6,8,14,0.6));
+  color: var(--text);
+  font-size: 1.02rem;
+  box-shadow: 0 12px 28px rgba(2,6,23,0.6);
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 120ms ease;
+}
+
+/* borde resaltado y elevación al focus */
+.rentar-page select#tarjeta_id:focus {
+  outline: none;
+  border-color: rgba(239,68,68,0.95);
+  box-shadow: 0 14px 36px rgba(239,68,68,0.06);
+  transform: translateY(-1px);
+}
+
+/* flecha personalizada, más elegante */
+.rentar-page .select-wrap::after {
+  content: "";
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%) rotate(0deg);
+  width: 12px;
+  height: 12px;
+  border-right: 2px solid rgba(226,229,231,0.9);
+  border-bottom: 2px solid rgba(226,229,231,0.9);
+  transform: translateY(-50%) rotate(45deg);
+  pointer-events: none;
+  opacity: 0.95;
+}
+
+/* Acciones (botones) con mejor separación y sombras */
+.rentar-page .rentar-actions {
+  margin-top: 1.4rem;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Botón primario con gradiente y micro-sombra */
+.rentar-page .btn-primary {
+  background: linear-gradient(90deg, #ef4444 0%, #f97316 100%);
+  color: #fff;
+  padding: 0.78rem 1.5rem;
+  border-radius: 999px;
+  box-shadow: 0 12px 36px rgba(249,115,22,0.12);
+  border: none;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+/* efecto hover */
+.rentar-page .btn-primary:hover {
+  transform: translateY(-3px) scale(1.01);
+  box-shadow: 0 18px 48px rgba(239,68,68,0.14);
+}
+
+/* Botón secundario estilo vidrio oscuro */
+.rentar-page .btn-secondary {
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border: 1px solid rgba(255,255,255,0.06);
+  color: #cfe7ff;
+  padding: 0.68rem 1.15rem;
+  border-radius: 999px;
+  font-weight: 700;
+  transition: transform 140ms ease, background 120ms ease;
+}
+
+.rentar-page .btn-secondary:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+}
+
+/* DERECHA - póster: hacerlo más grande y con overlay/etiqueta */
+.rentar-page .rentar-poster {
+  flex: 0 0 360px;
+  border-radius: 14px;
+  overflow: hidden;
+  align-self: flex-start;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.05));
+  border: 1px solid rgba(148,163,184,0.06);
+  box-shadow: 0 26px 60px rgba(0,0,0,0.75);
+  position: relative;
+  transition: transform 200ms ease, box-shadow 200ms ease;
+}
+
+/* sombra y elevación al hover del poster */
+.rentar-page .rentar-poster:hover {
+  transform: translateY(-6px) scale(1.01);
+  box-shadow: 0 36px 86px rgba(0,0,0,0.85);
+}
+
+/* imagen con cover y ligero zoom dentro */
+.rentar-page .rentar-poster img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  aspect-ratio: 2 / 3;
+  transition: transform 420ms ease;
+}
+
+/* zoom sutil cuando se pasa el mouse */
+.rentar-page .rentar-poster:hover img {
+  transform: scale(1.04);
+}
+
+/* etiqueta en la esquina superior derecha del poster para "Poster" o rating pequeño */
+.rentar-page .rentar-poster::before {
+  content: "Póster";
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  padding: 6px 10px;
+  font-size: 0.82rem;
+  background: linear-gradient(90deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+  color: #e6eef8;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.03);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.6);
+}
+
+/* subtítulo / descripción bajo el select (si existe) */
+.rentar-page .rentar-label + .select-wrap + .save-note {
+  margin-top: 0.6rem;
+  color: #bcd4ff;
+  font-size: 0.85rem;
+}
+
+/* Adaptaciones mobile: apilar, ajustar tamaños */
+@media (max-width: 900px) {
+  .rentar-page .rentar-container {
+    flex-direction: column-reverse;
+    gap: 1rem;
+    padding: 1rem;
+  }
+  .rentar-page .rentar-poster {
+    width: 100%;
+    flex: 0 0 auto;
+    border-radius: 12px;
+  }
+  .rentar-page .rentar-info {
+    padding: 1rem;
+  }
+  .rentar-page .rentar-actions { justify-content: stretch; }
+  .rentar-page .rentar-actions .btn-primary { width: 100%; }
+  .rentar-page .rentar-actions .btn-secondary { width: 100%; text-align: center; }
+}
+
+/* Soporte degradado si backdrop-filter no está disponible (fallback) */
+@supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  .rentar-page .rentar-container {
+    background: linear-gradient(180deg, rgba(10,12,18,0.80), rgba(10,12,18,0.70));
+  }
+}
+
+/* Fallback/estética para póster en /rentar */
+.rentar-page .rentar-poster {
+  background-color: rgba(6,8,14,0.45);
+  background-image: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.04));
+  min-height: 360px; /* garantiza espacio aunque img no cargue */
+}
+
+.rentar-page .rentar-poster img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  aspect-ratio: 2 / 3;
+  transition: transform 420ms ease, opacity 220ms ease;
+  min-height: 320px;
+  background-color: rgba(10,12,18,0.6); /* visible si la img falla */
+}
+
+/* Estilo visual cuando se usa fallback (opcional: efecto blur) */
+.rentar-page .rentar-poster img.img-fallback {
+  filter: blur(2px) contrast(0.9);
+  opacity: 0.95;
+}
