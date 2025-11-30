@@ -429,42 +429,111 @@ def buscar_peliculas(texto=None, genero=None, anio=None, limit=50):
 def crear_renta(usuario_id, movie_id, dias=3, monto=None):
     """
     Crea un registro de renta para un usuario y una película.
-    Por defecto dura 3 días.
+    - Por defecto dura 3 días.
+    - Máximo 5 días.
     """
+    if dias < 1 or dias > 5:
+        print("Error: El número de días debe estar entre 1 y 5.")
+        return False
+
     conn = get_connection()
     if not conn:
         print("=== No se pudo obtener la conexión en crear_renta ===")
         return False
 
+    from datetime import datetime, timedelta
     fecha_inicio = datetime.now()
     fecha_devolucion = fecha_inicio + timedelta(days=dias)
-    estatus = "Activa"   # usaremos este estatus al crear
+    estatus = "Activa"
 
     query = """
+    BEGIN TRANSACTION;
     INSERT INTO dbo.Rentas (Usuario_ID, Movie_ID, FechaInicio, FechaDevolucion, Estatus, Monto)
     VALUES (?, ?, ?, ?, ?, ?);
+    COMMIT;
     """
 
     try:
         cursor = conn.cursor()
-        cursor.execute(
-            query,
-            (
-                usuario_id,
-                movie_id,
-                fecha_inicio,
-                fecha_devolucion,
-                estatus,
-                monto,
-            ),
-        )
+        cursor.execute(query, (
+            usuario_id,
+            movie_id,
+            fecha_inicio,
+            fecha_devolucion,
+            estatus,
+            monto
+        ))
         conn.commit()
+        print(f">>> Renta creada: Usuario {usuario_id}, Película {movie_id}, Días {dias}")
         return True
     except Exception as e:
         print(f"Error al crear renta: {e}")
+        conn.rollback()
         return False
     finally:
         conn.close()
+
+def actualizar_estado_renta(renta_id, nuevo_estatus, usuario_id=None):
+    """
+    Actualiza el estado de una renta.
+    - renta_id: id de la renta a actualizar
+    - nuevo_estatus: string ("Devuelta", "Cancelada", etc.)
+    - usuario_id: opcional. Si se provee, se verifica que la renta pertenezca al usuario.
+    Retorna True si la actualización tuvo efecto, False si no (o en caso de error).
+    """
+    conn = get_connection()
+    if not conn:
+        print("=== No se pudo obtener la conexión en actualizar_estado_renta ===")
+        return False
+
+    try:
+        cursor = conn.cursor()
+
+        # Si se pasó usuario_id, verificar pertenencia
+        if usuario_id is not None:
+            cursor.execute("""
+                SELECT Usuario_ID FROM dbo.Rentas WHERE Renta_ID = ?
+            """, (renta_id,))
+            row = cursor.fetchone()
+            if not row:
+                print(f"actualizar_estado_renta: renta {renta_id} no encontrada")
+                return False
+            if row[0] != usuario_id:
+                print(f"actualizar_estado_renta: renta {renta_id} no pertenece al usuario {usuario_id}")
+                return False
+
+        # Ejecutar la actualización dentro de una transacción
+        cursor.execute("BEGIN TRANSACTION;")
+        cursor.execute("""
+            UPDATE dbo.Rentas
+            SET Estatus = ?
+            WHERE Renta_ID = ?;
+        """, (nuevo_estatus, renta_id))
+        affected = cursor.rowcount
+
+        if affected == 0:
+            # No se actualizó ninguna fila (posible id inexistente)
+            cursor.execute("ROLLBACK;")
+            print(f"actualizar_estado_renta: no se afectó ninguna fila para renta_id={renta_id}")
+            return False
+
+        cursor.execute("COMMIT;")
+        conn.commit()
+        print(f">>> Renta {renta_id} actualizada a '{nuevo_estatus}' (filas afectadas: {affected})")
+        return True
+
+    except Exception as e:
+        print(f"Error al actualizar estado de renta: {e}")
+        try:
+            conn.rollback()
+        except:
+            pass
+        return False
+    finally:
+        try:
+            conn.close()
+        except:
+            pass
 
 
 def obtener_rentas_por_usuario(usuario_id, filtro=None):

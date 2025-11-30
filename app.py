@@ -222,5 +222,49 @@ def api_pelicula(movie_id):
         "recomendadas": recomendadas
     })
 
+# ==== RUTAS PARA DEVOLVER/CANCELAR RENTA ====
+@app.route("/renta/devolver/<int:renta_id>", methods=["POST"])
+def devolver_renta(renta_id):
+    usuario_id = session.get("usuario_id")
+    if not usuario_id:
+        flash("Debes iniciar sesión para devolver una renta.")
+        return redirect(url_for("login"))
+
+    # Validar que la renta pertenece al usuario
+    rentas = obtener_rentas_por_usuario(usuario_id)
+    if not any(r.get("renta_id") == renta_id for r in rentas):
+        flash("No tienes permiso para devolver esa renta.")
+        return redirect(url_for("cuenta"))
+
+    from models import actualizar_estado_renta
+    ok = actualizar_estado_renta(renta_id, "Devuelta", usuario_id=usuario_id)
+    if not ok:
+        flash("No se pudo procesar la devolución. Inténtalo más tarde.")
+    else:
+        flash("Renta marcada como devuelta.")
+    return redirect(url_for("cuenta"))
+
+
+@app.route("/renta/cancelar/<int:renta_id>", methods=["POST"])
+def cancelar_renta(renta_id):
+    usuario_id = session.get("usuario_id")
+    if not usuario_id:
+        flash("Debes iniciar sesión para cancelar una renta.")
+        return redirect(url_for("login"))
+
+    # Validar que la renta pertenece al usuario
+    rentas = obtener_rentas_por_usuario(usuario_id)
+    if not any(r.get("renta_id") == renta_id for r in rentas):
+        flash("No tienes permiso para cancelar esa renta.")
+        return redirect(url_for("cuenta"))
+
+    from models import actualizar_estado_renta
+    ok = actualizar_estado_renta(renta_id, "Cancelada", usuario_id=usuario_id)
+    if not ok:
+        flash("No se pudo cancelar la renta. Inténtalo más tarde.")
+    else:
+        flash("Renta cancelada.")
+    return redirect(url_for("cuenta"))
+
 if __name__ == "__main__":
     app.run(debug=True, host="127.0.0.1", port=8000)
