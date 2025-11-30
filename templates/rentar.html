@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <title>Rentar Película - Pago Simulado</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+</head>
+<body>
+    <header class="site-header">
+        <div class="logo-area">
+            <span class="logo-icon">🦅</span>
+            <span class="logo-text">Pelis - UAGRO</span>
+        </div>
+        <nav class="main-nav">
+            <a href="{{ url_for('home') }}" class="nav-link">Inicio</a>
+            <a href="{{ url_for('peliculas') }}" class="nav-link">Películas</a>
+            <a href="{{ url_for('cuenta') }}" class="nav-link">Mi cuenta</a>
+        </nav>
+    </header>
+
+    <main class="main-content" style="padding: 2rem 4rem;">
+        <h1>Rentar Película (Pago Simulado)</h1>
+        <p>Vas a rentar la película con ID: <strong>{{ movie_id }}</strong></p>
+        <p>Días de renta: <strong>{{ dias }}</strong></p>
+        <p>Monto a pagar: <strong>${{ '%.2f'|format(monto) }} MXN</strong></p>
+
+        <form method="post" action="{{ url_for('rentar_pelicula', movie_id=movie_id) }}">
+            <button type="submit" class="btn-primary btn-lg">Confirmar Pago y Rentar</button>
+            <a href="{{ url_for('detalle_pelicula', movie_id=movie_id) }}" class="btn-secondary btn-lg" style="margin-left: 1rem;">Cancelar</a>
+        </form>
+    </main>
+</body>
+</html>

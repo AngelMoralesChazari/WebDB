@@ -184,22 +184,29 @@ def sistema_rentas():
     return redirect(url_for("cuenta"))
 
 
-@app.route("/rentar/<int:movie_id>")
+@app.route("/rentar/<int:movie_id>", methods=["GET", "POST"])
 def rentar_pelicula(movie_id):
     usuario_id = session.get("usuario_id")
     if not usuario_id:
         flash("Debes iniciar sesión para rentar una película.")
         return redirect(url_for("login"))
 
-    ok = crear_renta(usuario_id=usuario_id, movie_id=movie_id, dias=3, monto=50.00)
+    if request.method == "GET":
+        # Mostrar formulario simple con días y monto fijos
+        return render_template("rentar.html", movie_id=movie_id, dias=3, monto=50.00)
+
+    # POST: procesar "pago simulado" y crear la renta
+    dias = 3  # fijo
+    monto = 50.00  # fijo
+
+    ok = crear_renta(usuario_id=usuario_id, movie_id=movie_id, dias=dias, monto=monto)
 
     if not ok:
         flash("Ocurrió un error al crear la renta. Inténtalo más tarde.")
         return redirect(url_for("detalle_pelicula", movie_id=movie_id))
 
     flash("¡Renta creada correctamente!")
-    # >>> En lugar de ir al sistema de rentas, volvemos al detalle
-    return redirect(url_for("detalle_pelicula", movie_id=movie_id))
+    return redirect(url_for("cuenta"))
 
 # ==== API ====
 
