@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Iniciar sesión | Pelis - UAGRO</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Ajusta el path de CSS si ya usas otro -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+<header class="site-header">
+    <div class="logo-area">
+        <span class="logo-text">Pelis - UAGRO</span>
+    </div>
+
+    <nav class="main-nav">
+        <a href="{{ url_for('home') }}" class="nav-link">Inicio</a>
+        <a href="{{ url_for('peliculas') }}" class="nav-link">Películas</a>
+        <a href="{{ url_for('series') }}" class="nav-link">Series</a>
+        <a href="{{ url_for('cuenta') }}" class="nav-link">Mi cuenta</a>
+    </nav>
+</header>
+
+<main class="main-content login-page">
+    <section class="login-container">
+        <h1>Iniciar sesión / Registrarse</h1>
+
+        <!-- Mensajes flash -->
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <ul class="flash-messages">
+                    {% for msg in messages %}
+                        <li>{{ msg }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+
+        <div class="login-forms">
+            <!-- Formulario de login -->
+            <form method="post" action="{{ url_for('login_post') }}" class="form-login">
+                <h2>Ya tengo cuenta</h2>
+                <label>
+                    Correo electrónico
+                    <input type="email" name="email" required>
+                </label>
+                <label>
+                    Contraseña
+                    <input type="password" name="password" required>
+                </label>
+                <button type="submit">Iniciar sesión</button>
+            </form>
+
+            <!-- Formulario de registro -->
+            <form method="post" action="{{ url_for('registro') }}" class="form-register">
+                <h2>Registrarme</h2>
+                <label>
+                    Nombre
+                    <input type="text" name="nombre" required>
+                </label>
+                <label>
+                    Correo electrónico
+                    <input type="email" name="email" required>
+                </label>
+                <label>
+                    Contraseña
+                    <input type="password" name="password" required>
+                </label>
+                <button type="submit">Crear cuenta</button>
+            </form>
+        </div>
+    </section>
+</main>
+</body>
+</html>

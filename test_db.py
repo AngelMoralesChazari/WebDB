@@ -18,6 +18,7 @@ try:
         print(r.Movie_ID, "-", r.Title)
     conn.close()
     print("Consulta terminada y conexión cerrada")
+
 except Exception as e:
     print("Eror en la conexión:")
     print(e)

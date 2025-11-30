@@ -1,12 +1,76 @@
-from flask import Flask, render_template, abort
+from flask import Flask, render_template, abort, request, redirect, url_for, flash, session
 from models import (
     obtener_peliculas,
     obtener_pelicula_aleatoria,
     obtener_peliculas_aleatorias,
     obtener_pelicula_por_id,
+    registrar_usuario,
+    obtener_usuario_por_email,
 )
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
+app.secret_key = "test"
+
+
+@app.route("/login", methods=["GET"])
+def login():
+    # Solo muestra la página de login/registro
+    return render_template("login.html")
+
+
+@app.route("/registro", methods=["POST"])
+def registro():
+    nombre = request.form.get("nombre")
+    email = request.form.get("email")
+    password = request.form.get("password")
+
+    if not nombre or not email or not password:
+        flash("Todos los campos son obligatorios.")
+        return redirect(url_for("login"))
+
+    # Ver si ya existe un usuario con ese email
+    usuario_existente = obtener_usuario_por_email(email)
+    if usuario_existente:
+        flash("Ese correo ya está registrado.")
+        return redirect(url_for("login"))
+
+    # Hasheamos la contraseña antes de guardarla
+    password_hash = generate_password_hash(password)
+
+    exito = registrar_usuario(nombre, email, password_hash)
+    if not exito:
+        flash("Ocurrió un error al registrar el usuario.")
+        return redirect(url_for("login"))
+
+    flash("Registro exitoso, ahora puedes iniciar sesión.")
+    return redirect(url_for("login"))
+
+
+@app.route("/login", methods=["POST"])
+def login_post():
+    email = request.form.get("email")
+    password = request.form.get("password")
+
+    if not email or not password:
+        flash("Debes ingresar correo y contraseña.")
+        return redirect(url_for("login"))
+
+    usuario = obtener_usuario_por_email(email)
+    if not usuario:
+        flash("Correo o contraseña incorrectos.")
+        return redirect(url_for("login"))
+
+    if not check_password_hash(usuario["password_hash"], password):
+        flash("Correo o contraseña incorrectos.")
+        return redirect(url_for("login"))
+
+    session["usuario_id"] = usuario["id"]
+    session["usuario_nombre"] = usuario["nombre"]
+
+    # Aquí más adelante manejaremos sesión.
+    flash(f"Bienvenido, {usuario['nombre']} (aún sin sesión persistente).")
+    return redirect(url_for("home"))
 
 
 @app.route("/")
@@ -46,6 +110,13 @@ def series():
 @app.route("/cuenta")
 def cuenta():
     return render_template("cuenta.html")
+
+@app.route("/logout")
+def logout():
+    session.pop("usuario_id", None)
+    session.pop("usuario_nombre", None)
+    flash("Has cerrado sesión correctamente.")
+    return redirect(url_for("home"))
 
 
 if __name__ == "__main__":

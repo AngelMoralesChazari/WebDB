@@ -43,7 +43,7 @@
         <nav class="main-nav">
             <a href="{{ url_for('home') }}" class="nav-link active">Inicio</a>
             <a href="{{ url_for('peliculas') }}" class="nav-link">Películas</a>
-            <a href="{{ url_for('series') }}" class="nav-link">Series</a>
+
             <a href="{{ url_for('cuenta') }}" class="nav-link">Mi cuenta</a>
         </nav>
 
@@ -53,7 +53,6 @@
     </header>
 
     <main class="main-content">
-        <!-- HERO (película destacada desde BD) -->
         <section class="hero" {% if destacada and destacada.poster %} style="
                 background-image:
                     linear-gradient(to right, rgba(2,6,23,0.95), rgba(2,6,23,0.6), transparent),

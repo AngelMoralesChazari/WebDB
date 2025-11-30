@@ -206,3 +206,63 @@ def obtener_pelicula_por_id(movie_id):
         return None
     finally:
         conn.close()
+
+# Usuarios
+def registrar_usuario(nombre, email, password_hash):
+    conn = get_connection()
+    if not conn:
+        print("=== No se pudo obtener la conexión en registrar_usuario ===")
+        return False
+
+    query = """
+        INSERT INTO dbo.Usuarios (Nombre, Email, Contraseña)
+        VALUES (?, ?, ?);
+    """
+
+    try:
+        cursor = conn.cursor()
+        cursor.execute(query, (nombre, email, password_hash))
+        conn.commit()
+        print(f">>> Usuario registrado: {email}")
+        return True
+    except Exception as e:
+        print(f"Error al registrar usuario: {e}")
+        return False
+    finally:
+        conn.close()
+        print("!= Conexión cerrada en registrar_usuario")
+
+
+def obtener_usuario_por_email(email):
+    conn = get_connection()
+    if not conn:
+        print("=== No se pudo obtener la conexión en obtener_usuario_por_email ===")
+        return None
+
+    query = """
+        SELECT Usuario_ID, Nombre, Email, Contraseña, FechaRegistro
+        FROM dbo.Usuarios
+        WHERE Email = ?;
+    """
+
+    try:
+        cursor = conn.cursor()
+        cursor.execute(query, (email,))
+        row = cursor.fetchone()
+        if not row:
+            return None
+
+        usuario = {
+            "id": row.Usuario_ID,
+            "nombre": row.Nombre,
+            "email": row.Email,
+            "password_hash": row.Contraseña,
+            "fecha_registro": row.FechaRegistro,
+        }
+        return usuario
+    except Exception as e:
+        print(f"Error al obtener usuario por email: {e}")
+        return None
+    finally:
+        conn.close()
+        print("!= Conexión cerrada en obtener_usuario_por_email")
