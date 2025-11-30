@@ -15,9 +15,7 @@ app.secret_key = "test"
 
 @app.route("/login", methods=["GET"])
 def login():
-    # Solo muestra la página de login/registro
     return render_template("login.html")
-
 
 @app.route("/registro", methods=["POST"])
 def registro():
@@ -29,13 +27,11 @@ def registro():
         flash("Todos los campos son obligatorios.")
         return redirect(url_for("login"))
 
-    # Ver si ya existe un usuario con ese email
     usuario_existente = obtener_usuario_por_email(email)
     if usuario_existente:
         flash("Ese correo ya está registrado.")
         return redirect(url_for("login"))
 
-    # Hasheamos la contraseña antes de guardarla
     password_hash = generate_password_hash(password)
 
     exito = registrar_usuario(nombre, email, password_hash)
@@ -68,7 +64,6 @@ def login_post():
     session["usuario_id"] = usuario["id"]
     session["usuario_nombre"] = usuario["nombre"]
 
-    # Aquí más adelante manejaremos sesión.
     flash(f"Bienvenido, {usuario['nombre']} (aún sin sesión persistente).")
     return redirect(url_for("home"))
 
@@ -93,7 +88,6 @@ def detalle_pelicula(movie_id):
         abort(404)
     return render_template("detalle_pelicula.html", pelicula=pelicula)
 
-
 @app.route("/peliculas")
 def peliculas():
     print(">>> Entrando a la ruta /peliculas")
@@ -101,11 +95,9 @@ def peliculas():
     print(">>> En vista /peliculas, len(lista_peliculas) =", len(lista_peliculas))
     return render_template("peliculas.html", peliculas=lista_peliculas)
 
-
 @app.route("/series")
 def series():
     return render_template("series.html")
-
 
 @app.route("/cuenta")
 def cuenta():
@@ -117,7 +109,6 @@ def logout():
     session.pop("usuario_nombre", None)
     flash("Has cerrado sesión correctamente.")
     return redirect(url_for("home"))
-
 
 if __name__ == "__main__":
     app.run(debug=True, host="127.0.0.1", port=8000)

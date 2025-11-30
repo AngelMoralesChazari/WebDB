@@ -1,6 +1,5 @@
 from db import get_connection
 
-#Banner
 def obtener_peliculas(limit = 20):
     print("obtener_peliculas() llamado, limit =", limit)
 

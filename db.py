@@ -1,6 +1,5 @@
 import pyodbc
 
-
 def get_connection():
     try:
         conn = pyodbc.connect(

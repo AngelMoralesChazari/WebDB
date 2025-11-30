@@ -8,31 +8,6 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 
-<script>
-    function scrollCarousel(nombre, direction) {
-        let id = '';
-        if (nombre === 'tendencias') {
-            id = 'carouselTendencias';
-        } else if (nombre === 'recomendadas') {
-            id = 'carouselRecomendadas';
-        } else {
-            return;
-        }
-
-        const carousel = document.getElementById(id);
-        const scrollAmount = 400; // píxeles a desplazar
-
-        if (direction === 'left') {
-            carousel.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
-        } else {
-            carousel.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-        }
-    }
-</script>
-</body>
-
-</html>
-
 <body>
     <header class="site-header">
         <div class="logo-area">
@@ -43,23 +18,27 @@
         <nav class="main-nav">
             <a href="{{ url_for('home') }}" class="nav-link active">Inicio</a>
             <a href="{{ url_for('peliculas') }}" class="nav-link">Películas</a>
-
             <a href="{{ url_for('cuenta') }}" class="nav-link">Mi cuenta</a>
         </nav>
 
         <div class="user-area">
-            <button class="btn-login">Iniciar sesión</button>
+            {% if session.get('usuario_nombre') %}
+                <span class="user-name">Hola, {{ session['usuario_nombre'] }}</span>
+                <a href="{{ url_for('logout') }}" class="btn-logout">Cerrar sesión</a>
+            {% else %}
+                <a href="{{ url_for('login') }}" class="btn-login">Iniciar sesión</a>
+            {% endif %}
         </div>
     </header>
 
     <main class="main-content">
         <section class="hero" {% if destacada and destacada.poster %} style="
-                background-image:
-                    linear-gradient(to right, rgba(2,6,23,0.95), rgba(2,6,23,0.6), transparent),
-                    url('{{ destacada.poster }}');
-                background-size: cover;
-                background-position: center top;
-             " {% endif %}>
+            background-image:
+            linear-gradient(to right, rgba(2,6,23,0.95), rgba(2,6,23,0.6), transparent),
+            url('{{ destacada.poster }}');
+            background-size: cover;
+            background-position: center top;
+            " {% endif %}>
             <div class="hero-overlay"></div>
             <div class="hero-content">
                 {% if destacada %}
@@ -92,12 +71,12 @@
                     <a href="{{ url_for('detalle_pelicula', movie_id=peli.id) }}" class="movie-link">
                         <article class="movie-card-carousel">
                             <div class="movie-cover" style="
-                 {% if peli.poster %}
-                     background-image: url('{{ peli.poster }}');
-                     background-size: cover;
-                     background-position: center;
-                 {% endif %}
-                 ">
+                                {% if peli.poster %}
+                                background-image: url('{{ peli.poster }}');
+                                background-size: cover;
+                                background-position: center;
+                                {% endif %}
+                                ">
                             </div>
                             <h3 class="movie-title">{{ peli.titulo }}</h3>
                             <p class="movie-meta">
@@ -125,12 +104,12 @@
                     <a href="{{ url_for('detalle_pelicula', movie_id=peli.id) }}" class="movie-link">
                         <article class="movie-card-carousel">
                             <div class="movie-cover" style="
-                 {% if peli.poster %}
-                     background-image: url('{{ peli.poster }}');
-                     background-size: cover;
-                     background-position: center;
-                 {% endif %}
-                 ">
+                                {% if peli.poster %}
+                                background-image: url('{{ peli.poster }}');
+                                background-size: cover;
+                                background-position: center;
+                                {% endif %}
+                                ">
                             </div>
                             <h3 class="movie-title">{{ peli.titulo }}</h3>
                             <p class="movie-meta">
@@ -148,6 +127,27 @@
         </section>
     </main>
 
+    <script>
+        function scrollCarousel(nombre, direction) {
+            let id = '';
+            if (nombre === 'tendencias') {
+                id = 'carouselTendencias';
+            } else if (nombre === 'recomendadas') {
+                id = 'carouselRecomendadas';
+            } else {
+                return;
+            }
+
+            const carousel = document.getElementById(id);
+            const scrollAmount = 400;
+
+            if (direction === 'left') {
+                carousel.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+            } else {
+                carousel.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+            }
+        }
+    </script>
 </body>
 
 </html>
