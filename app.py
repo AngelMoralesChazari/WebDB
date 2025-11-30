@@ -70,8 +70,8 @@ def login_post():
 @app.route("/")
 def home():
     pelicula_destacada = obtener_pelicula_aleatoria()
-    tendencias = obtener_peliculas_aleatorias(limit=14)
-    recomendadas = obtener_peliculas_aleatorias(limit=14)
+    tendencias = obtener_peliculas_aleatorias(limit=18)
+    recomendadas = obtener_peliculas_aleatorias(limit=181)
     return render_template(
         "index.html",
         destacada=pelicula_destacada,
@@ -90,7 +90,7 @@ def detalle_pelicula(movie_id):
 @app.route("/peliculas")
 def peliculas():
     print(">>> Entrando a la ruta /peliculas")
-    lista_peliculas = obtener_peliculas(limit=20)
+    lista_peliculas = obtener_peliculas(limit=24)
     print(">>> En vista /peliculas, len(lista_peliculas) =", len(lista_peliculas))
     return render_template("peliculas.html", peliculas=lista_peliculas)
 

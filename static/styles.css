@@ -195,7 +195,7 @@ body {
 }
 
 .row-title {
-  font-size: 1.3rem;
+  font-size: 1.5rem;
   margin-bottom: 10px;
 }
 
@@ -646,7 +646,7 @@ body {
     transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
     display: flex;
     flex-direction: column;
-    height: 100%;              /* ✅ que ocupe toda la altura de la celda */
+    height: 100%;  /* ✅ todas las tarjetas igual de altas */
 }
 
 /* Efecto al pasar el mouse */
@@ -679,37 +679,21 @@ body {
     transform: scale(1.06);
 }
 
-/* Badge de rating */
-.movie-rating-badge {
-    position: absolute;
-    left: 0.6rem;
-    bottom: 0.6rem;
-    background: rgba(15, 23, 42, 0.92);
-    border-radius: 999px;
-    padding: 0.18rem 0.6rem;
-    font-size: 0.8rem;
-    color: #fde68a;
-    border: 1px solid rgba(234, 179, 8, 0.7);
-    display: inline-flex;
-    align-items: center;
-    gap: 0.2rem;
-}
-
 /* Texto bajo la tarjeta */
 .movie-info {
     padding: 0.6rem 0.75rem 0.8rem;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    height: 100%;           /* ✅ ocupa el espacio restante */
+    gap: 0.35rem;
+    height: 100%;
 }
 
 .movie-info .movie-title {
     font-size: 0.95rem;
-    margin: 0 0 0.25rem 0;
+    margin: 0;
     font-weight: 600;
     display: -webkit-box;
-    -webkit-line-clamp: 2;  /* ✅ máximo 2 líneas */
+    -webkit-line-clamp: 2;   /* máximo 2 líneas */
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
@@ -718,7 +702,7 @@ body {
     font-size: 0.8rem;
     color: #9ca3af;
     display: -webkit-box;
-    -webkit-line-clamp: 2;  /* ✅ máximo 2 líneas */
+    -webkit-line-clamp: 2;   /* máximo 2 líneas */
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
@@ -727,3 +711,56 @@ body {
     font-size: 0.75rem;
     color: #6b7280;
 }
+
+/* Línea de rating debajo del título */
+.movie-rating-line {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.8rem;
+    margin-bottom: 0.2rem;
+}
+
+.movie-rating-text {
+    color: #fde68a; /* doradito para la estrella */
+}
+
+.movie-votes {
+    font-size: 0.75rem;
+    color: #6b7280;
+}
+
+.movie-rating-row {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+}
+
+.movie-rating-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.18rem 0.7rem;
+    border-radius: 999px;
+    background: #111827;                /* relleno gris oscuro */
+    border: 1px solid #4b5563;          /* borde gris */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.6);
+}
+
+.movie-rating-star {
+    color: #facc15;                     /* estrella amarilla */
+    font-size: 0.9rem;
+}
+
+.movie-rating-score {
+    color: #f9fafb;                     /* texto casi blanco */
+    font-size: 0.8rem;
+}
+
+.movie-votes {
+    font-size: 0.75rem;
+    color: #6b7280;
+}
+

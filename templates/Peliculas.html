@@ -1,27 +1,29 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <title>Pelis - UAGRO | Películas</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
+
 <body>
-<header class="site-header">
-    <div class="logo-area">
-        <span class="logo-icon">🦅</span>
-        <span class="logo-text">Pelis - UAGRO</span>
-    </div>
+    <header class="site-header">
+        <div class="logo-area">
+            <span class="logo-icon">🦅</span>
+            <span class="logo-text">Pelis - UAGRO</span>
+        </div>
 
-    <nav class="main-nav">
-        <a href="{{ url_for('home') }}" class="nav-link">Inicio</a>
-        <a href="{{ url_for('peliculas') }}" class="nav-link active">Películas</a>
-        <a href="{{ url_for('series') }}" class="nav-link">Series</a>
-        <a href="{{ url_for('cuenta') }}" class="nav-link">Mi cuenta</a>
-    </nav>
+        <nav class="main-nav">
+            <a href="{{ url_for('home') }}" class="nav-link">Inicio</a>
+            <a href="{{ url_for('peliculas') }}" class="nav-link active">Películas</a>
+            <a href="{{ url_for('series') }}" class="nav-link">Series</a>
+            <a href="{{ url_for('cuenta') }}" class="nav-link">Mi cuenta</a>
+        </nav>
 
-    <div class="user-area">
-        {% if session.get('usuario_nombre') %}
+        <div class="user-area">
+            {% if session.get('usuario_nombre') %}
             {% set primer_nombre = session['usuario_nombre'].split(' ')[0] %}
             <div class="user-menu">
                 <button class="btn-login user-menu-toggle">
@@ -32,68 +34,74 @@
                     <a href="{{ url_for('logout') }}">Cerrar sesión</a>
                 </div>
             </div>
-        {% else %}
+            {% else %}
             <a href="{{ url_for('login') }}" class="btn-login">Iniciar sesión</a>
-        {% endif %}
-    </div>
-</header>
-
-<main class="main-content peliculas-page">
-    <section class="row" style="margin-top: 20px;">
-        <div class="row-header">
-            <h2 class="row-title">Catálogo completo</h2>
-            <p class="row-subtitle">Explora las películas disponibles en la plataforma.</p>
+            {% endif %}
         </div>
+    </header>
 
-        {% if peliculas %}
-        <div class="movies-grid">
-            {% for peli in peliculas %}
-            <a href="{{ url_for('detalle_pelicula', movie_id=peli.id) }}" class="movie-card-link">
-                <article class="movie-card-grid">
-                    <div class="movie-poster-wrapper">
-                        <div class="movie-poster"
-                             style="
-                             {% if peli.poster %}
-                                 background-image: url('{{ peli.poster }}');
-                             {% endif %}
-                             ">
+    <main class="main-content peliculas-page">
+        <section class="row" style="margin-top: 20px;">
+            <div class="row-header">
+                <h2 class="row-title">Catálogo</h2>
+            </div>
+
+            {% if peliculas %}
+            <div class="movies-grid">
+                {% for peli in peliculas %}
+                <a href="{{ url_for('detalle_pelicula', movie_id=peli.id) }}" class="movie-card-link">
+                    <article class="movie-card-grid">
+                        <div class="movie-poster-wrapper">
+                            <div class="movie-poster" style="
+                 {% if peli.poster %}
+                     background-image: url('{{ peli.poster }}');
+                 {% endif %}
+                 ">
+                            </div>
                         </div>
-                        <div class="movie-rating-badge">
-                            ⭐ {{ peli.promedio|round(1) }}/10
+
+                        <div class="movie-info">
+                            <h3 class="movie-title">{{ peli.titulo }}</h3>
+
+                            <!-- Badge de rating DEBAJO del título -->
+                            <div class="movie-rating-row">
+                                <div class="movie-rating-badge">
+                                    <span class="movie-rating-star">★</span>
+                                    <span class="movie-rating-score">{{ peli.promedio|round(1) }}/10</span>
+                                </div>
+                                <span class="movie-votes">{{ peli.votos }} votos</span>
+                            </div>
+
+                            <p class="movie-meta">
+                                {{ peli.genero }} • {{ peli.fecha }}
+                            </p>
                         </div>
-                    </div>
-                    <div class="movie-info">
-                        <h3 class="movie-title">{{ peli.titulo }}</h3>
-                        <p class="movie-meta">
-                            {{ peli.genero }} • {{ peli.fecha }}<br>
-                            <span class="movie-votes">{{ peli.votos }} votos</span>
-                        </p>
-                    </div>
-                </article>
-            </a>
-            {% endfor %}
-        </div>
-        {% else %}
-        <p>No hay películas para mostrar.</p>
-        {% endif %}
-    </section>
-</main>
+                    </article>
+                </a>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p>No hay películas para mostrar.</p>
+            {% endif %}
+        </section>
+    </main>
 
-<script>
-    // Dropdown usuario
-    document.addEventListener('click', function (e) {
-        const toggle = document.querySelector('.user-menu-toggle');
-        const dropdown = document.querySelector('.user-menu-dropdown');
+    <script>
+        // Dropdown usuario
+        document.addEventListener('click', function (e) {
+            const toggle = document.querySelector('.user-menu-toggle');
+            const dropdown = document.querySelector('.user-menu-dropdown');
 
-        if (!toggle || !dropdown) return;
+            if (!toggle || !dropdown) return;
 
-        if (toggle.contains(e.target)) {
-            const isVisible = dropdown.style.display === 'block';
-            dropdown.style.display = isVisible ? 'none' : 'block';
-        } else if (!dropdown.contains(e.target)) {
-            dropdown.style.display = 'none';
-        }
-    });
-</script>
+            if (toggle.contains(e.target)) {
+                const isVisible = dropdown.style.display === 'block';
+                dropdown.style.display = isVisible ? 'none' : 'block';
+            } else if (!dropdown.contains(e.target)) {
+                dropdown.style.display = 'none';
+            }
+        });
+    </script>
 </body>
+
 </html>
