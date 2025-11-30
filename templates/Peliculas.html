@@ -41,47 +41,12 @@
 
     <main class="main-content peliculas-page">
 
-        <!-- PANEL DETALLE TIPO NETFLIX (OCULTO) -->
-        <section id="detallePanel" class="detalle-inline oculto">
-            <button class="detalle-inline-close" onclick="cerrarDetalle()">✕</button>
-
-            <div class="detalle-inline-hero" id="detalleHero">
-                <div class="detalle-inline-inner">
-                    <div class="detalle-inline-main">
-                        <h1 id="detalleTitulo" class="detalle-inline-title"></h1>
-                        <p class="detalle-inline-meta">
-                            <span id="detalleGenero"></span> •
-                            <span id="detalleFecha"></span><br>
-                            <span class="detalle-inline-rating">
-                                ⭐ <span id="detallePromedio"></span>/10
-                                <span id="detalleVotos" class="detalle-inline-votes"></span>
-                            </span>
-                        </p>
-                        <div class="detalle-inline-buttons">
-                            <button class="btn-primary btn-lg">▶ Reproducir</button>
-                            <button class="btn-secondary btn-lg" onclick="cerrarDetalle()">Cerrar</button>
-                        </div>
-                    </div>
-                    <div class="detalle-inline-poster-wrapper">
-                        <div id="detallePoster" class="detalle-inline-poster"></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="detalle-inline-body">
-                <div class="detalle-inline-section">
-                    <h2 class="detalle-inline-section-title">Sinopsis</h2>
-                    <p id="detalleOverview" class="detalle-inline-overview"></p>
-                </div>
-            </div>
-        </section>
-
         <!-- CATÁLOGO -->
         <section class="row" style="margin-top: 20px;">
             <div class="row-header">
-                <h2 class="row-title">Más títulos de este género</h2>
-                <p class="row-subtitle" id="textoSugerencias">
-                    Elige una película para ver más detalles y títulos relacionados.
+                <h2 class="row-title">Catálogo de películas</h2>
+                <p class="row-subtitle">
+                    Explora todas las películas disponibles en la plataforma.
                 </p>
             </div>
 
@@ -97,13 +62,11 @@
                     <select id="genero" name="genero">
                         <option value="">Todos</option>
                         <option value="Action" {% if genero_actual=='Action' %}selected{% endif %}>Acción</option>
-                        <option value="Adventure" {% if genero_actual=='Adventure' %}selected{% endif %}>Aventura
-                        </option>
+                        <option value="Adventure" {% if genero_actual=='Adventure' %}selected{% endif %}>Aventura</option>
                         <option value="Comedy" {% if genero_actual=='Comedy' %}selected{% endif %}>Comedia</option>
                         <option value="Drama" {% if genero_actual=='Drama' %}selected{% endif %}>Drama</option>
                         <option value="Horror" {% if genero_actual=='Horror' %}selected{% endif %}>Terror</option>
-                        <option value="Animation" {% if genero_actual=='Animation' %}selected{% endif %}>Animación
-                        </option>
+                        <option value="Animation" {% if genero_actual=='Animation' %}selected{% endif %}>Animación</option>
                     </select>
                 </div>
 
@@ -122,44 +85,44 @@
             {% if peliculas %}
             <div class="movies-grid">
                 {% for peli in peliculas %}
-                <!-- Card con data-* para usar en JS -->
-                <article class="movie-card-grid movie-click" data-titulo="{{ peli.titulo }}"
-                    data-genero="{{ peli.genero }}" data-fecha="{{ peli.fecha }}" data-poster="{{ peli.poster }}"
-                    data-promedio="{{ peli.promedio }}" data-votos="{{ peli.votos }}"
-                    data-overview="{{ peli.overview|default('Sin sinopsis disponible.', true) }}">
-                    <div class="movie-poster-wrapper">
-                        <div class="movie-poster"
-                            style="{% if peli.poster %}background-image: url('{{ peli.poster }}');{% endif %}">
-                        </div>
-                    </div>
-
-                    <div class="movie-info">
-                        <h3 class="movie-title">{{ peli.titulo }}</h3>
-
-                        <div class="movie-rating-row">
-                            <div class="movie-rating-badge">
-                                <span class="movie-rating-star">★</span>
-                                <span class="movie-rating-score">
-                                    {% if peli.promedio %}
-                                    {{ peli.promedio|float|round(1) }}/10
-                                    {% else %}
-                                    N/A
-                                    {% endif %}
-                                </span>
+                <!-- Cada card lleva a la página de detalles -->
+                <a href="{{ url_for('detalle_pelicula', movie_id=peli.id) }}" class="movie-link">
+                    <article class="movie-card-grid">
+                        <div class="movie-poster-wrapper">
+                            <div class="movie-poster"
+                                 style="{% if peli.poster %}background-image: url('{{ peli.poster }}');{% endif %}">
                             </div>
-                            <span class="movie-votes">{{ peli.votos }} votos</span>
                         </div>
 
-                        <p class="movie-meta">
-                            {{ peli.genero }} • {{ peli.fecha }}
-                        </p>
-                    </div>
-                </article>
+                        <div class="movie-info">
+                            <h3 class="movie-title">{{ peli.titulo }}</h3>
+
+                            <div class="movie-rating-row">
+                                <div class="movie-rating-badge">
+                                    <span class="movie-rating-star">★</span>
+                                    <span class="movie-rating-score">
+                                        {% if peli.promedio %}
+                                            {{ peli.promedio|float|round(1) }}/10
+                                        {% else %}
+                                            N/A
+                                        {% endif %}
+                                    </span>
+                                </div>
+                                <span class="movie-votes">{{ peli.votos }} votos</span>
+                            </div>
+
+                            <p class="movie-meta">
+                                {{ peli.genero }} • {{ peli.fecha }}
+                            </p>
+                        </div>
+                    </article>
+                </a>
                 {% endfor %}
             </div>
             {% else %}
-            <p style="color: #9ca3af; text-align: center; margin-top: 2rem;">No se encontraron películas con esos
-                filtros.</p>
+            <p style="color: #9ca3af; text-align: center; margin-top: 2rem;">
+                No se encontraron películas con esos filtros.
+            </p>
             {% endif %}
         </section>
     </main>
@@ -178,105 +141,6 @@
             } else if (!dropdown.contains(e.target)) {
                 dropdown.style.display = 'none';
             }
-        });
-
-        // Detalle inline simple (sin fetch)
-        function cerrarDetalle() {
-            const panel = document.getElementById('detallePanel');
-            panel.classList.add('oculto');
-
-            // Mostrar nuevamente todas las películas
-            filtrarGridPorGenero('');
-
-            // Restaurar texto original
-            const textoSug = document.getElementById('textoSugerencias');
-            textoSug.textContent = 'Elige una película para ver más detalles y títulos relacionados.';
-        }
-
-        function abrirDetalleDesdeCard(card) {
-            const titulo = card.dataset.titulo;
-            const genero = card.dataset.genero;
-            const fecha = card.dataset.fecha;
-            const poster = card.dataset.poster;
-            const promedio = card.dataset.promedio;
-            const votos = card.dataset.votos;
-            const overview = card.dataset.overview;
-
-            const panel = document.getElementById('detallePanel');
-            const hero = document.getElementById('detalleHero');
-            const posterDiv = document.getElementById('detallePoster');
-
-            // Fondo tipo Netflix
-            if (poster) {
-                hero.style.backgroundImage =
-                    `linear-gradient(to right, rgba(3,7,18,0.95), rgba(3,7,18,0.7), transparent), url('${poster}')`;
-                hero.style.backgroundSize = 'cover';
-                hero.style.backgroundPosition = 'center top';
-            } else {
-                hero.style.backgroundImage = 'none';
-                hero.style.background = 'radial-gradient(circle at top, #1f2937 0, #020617 55%)';
-            }
-
-            // Datos
-            document.getElementById('detalleTitulo').textContent = titulo || '';
-            document.getElementById('detalleGenero').textContent = genero || '';
-            document.getElementById('detalleFecha').textContent = fecha || '';
-
-            let promNum = Number(promedio);
-            document.getElementById('detallePromedio').textContent =
-                isNaN(promNum) ? 'N/A' : promNum.toFixed(1);
-
-            document.getElementById('detalleVotos').textContent =
-                votos ? `(${votos} votos)` : '';
-
-            document.getElementById('detalleOverview').textContent =
-                overview || 'Sin sinopsis disponible.';
-
-            // Poster grande
-            if (poster) {
-                posterDiv.style.backgroundImage = `url('${poster}')`;
-            } else {
-                posterDiv.style.backgroundImage = 'none';
-            }
-
-            // Actualizar texto de la sección de sugerencias
-            const textoSug = document.getElementById('textoSugerencias');
-            if (genero) {
-                textoSug.textContent = `Más películas del género: ${genero}`;
-            } else {
-                textoSug.textContent = 'Más títulos relacionados.';
-            }
-
-            // Filtrar visualmente el grid según el género de la película seleccionada
-            filtrarGridPorGenero(genero);
-
-            panel.classList.remove('oculto');
-        }
-
-        function filtrarGridPorGenero(genero) {
-            const cards = document.querySelectorAll('.movie-click');
-            if (!genero) {
-                // Si no hay género, mostramos todo
-                cards.forEach(c => c.style.display = '');
-                return;
-            }
-
-            cards.forEach(card => {
-                const genCard = (card.dataset.genero || '').toLowerCase();
-                const genBuscado = genero.toLowerCase();
-
-                // Si incluye el género buscado en la cadena, se muestra
-                if (genCard.includes(genBuscado)) {
-                    card.style.display = '';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        }
-
-        // Asignar evento a todas las cards
-        document.querySelectorAll('.movie-click').forEach(card => {
-            card.addEventListener('click', () => abrirDetalleDesdeCard(card));
         });
     </script>
 

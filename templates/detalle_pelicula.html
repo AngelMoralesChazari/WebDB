@@ -1,60 +1,175 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
-    <title>{{ pelicula.titulo }} | Pelis - UAGRO</title>
+    <title>Pelis - UAGRO | {{ pelicula.titulo }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
+
 <body>
-<header class="site-header">
-    <div class="logo-area">
-        <span class="logo-icon">🦅</span>
-        <span class="logo-text">Pelis - UAGRO</span>
-    </div>
+    <!-- MISMO HEADER QUE EN INDEX / PELICULAS -->
+    <header class="site-header">
+        <div class="logo-area">
+            <span class="logo-icon">🦅</span>
+            <span class="logo-text">Pelis - UAGRO</span>
+        </div>
 
-    <nav class="main-nav">
-        <a href="{{ url_for('home') }}" class="nav-link">Inicio</a>
-        <a href="{{ url_for('peliculas') }}" class="nav-link">Películas</a>
-        <a href="{{ url_for('series') }}" class="nav-link">Series</a>
-        <a href="{{ url_for('cuenta') }}" class="nav-link">Mi cuenta</a>
-    </nav>
+        <nav class="main-nav">
+            <a href="{{ url_for('home') }}" class="nav-link">Inicio</a>
+            <a href="{{ url_for('peliculas') }}" class="nav-link">Películas</a>
+            <a href="{{ url_for('cuenta') }}" class="nav-link">Mi cuenta</a>
+        </nav>
 
-    <div class="user-area">
-        <button class="btn-login">Iniciar sesión</button>
-    </div>
-</header>
+        <div class="user-area">
+            {% if session.get('usuario_nombre') %}
+            {% set primer_nombre = session['usuario_nombre'].split(' ')[0] %}
+            <div class="user-menu">
+                <button class="btn-login user-menu-toggle">
+                    {{ primer_nombre }}
+                </button>
+                <div class="user-menu-dropdown">
+                    <a href="{{ url_for('cuenta') }}">Configuración</a>
+                    <a href="{{ url_for('logout') }}">Cerrar sesión</a>
+                </div>
+            </div>
+            {% else %}
+            <a href="{{ url_for('login') }}" class="btn-login">Iniciar sesión</a>
+            {% endif %}
+        </div>
+    </header>
 
-<main class="main-content detalle-page">
-    <section class="detalle-hero"
-             {% if pelicula.poster %}
-             style="
+    <main class="main-content peliculas-page">
+
+        <!-- HERO DETALLE (BASADO EN EL PANEL INLINE) -->
+        <section class="detalle-inline">
+            <button class="detalle-inline-close" onclick="window.history.back()">✕</button>
+
+            <div class="detalle-inline-hero" style="
+                {% if pelicula.poster %}
                 background-image:
-                    linear-gradient(to right, rgba(2,6,23,0.95), rgba(2,6,23,0.6), transparent),
+                    linear-gradient(to right, rgba(3,7,18,0.95), rgba(3,7,18,0.7), transparent),
                     url('{{ pelicula.poster }}');
                 background-size: cover;
                 background-position: center top;
-             "
-             {% endif %}>
-        <div class="detalle-overlay"></div>
-        <div class="detalle-content">
-            <h1 class="hero-title">{{ pelicula.titulo }}</h1>
-            <p class="hero-description">
-                <strong>{{ pelicula.genero }}</strong> • {{ pelicula.fecha }}<br>
-                ⭐ {{ pelicula.promedio|round(1) }}/10 ({{ pelicula.votos }} votos)<br>
-                Idioma original: {{ pelicula.idioma }}
-            </p>
-            <div class="hero-buttons">
-                <button class="btn-primary">▶ Reproducir</button>
-                <button class="btn-secondary" onclick="history.back()">← Volver</button>
-            </div>
-        </div>
-    </section>
+                {% else %}
+                background: radial-gradient(circle at top, #1f2937 0, #020617 55%);
+                {% endif %}
+            ">
+                <div class="detalle-inline-inner">
+                    <div class="detalle-inline-main">
+                        <h1 class="detalle-inline-title">{{ pelicula.titulo }}</h1>
+                        <p class="detalle-inline-meta">
+                            {{ pelicula.genero }} • {{ pelicula.fecha }}<br>
+                            <span class="detalle-inline-rating">
+                                ⭐
+                                {% if pelicula.promedio %}
+                                    {{ pelicula.promedio|float|round(1) }}/10
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                                <span class="detalle-inline-votes">
+                                    ({{ pelicula.votos }} votos)
+                                </span>
+                            </span>
+                            {% if pelicula.idioma %}
+                                <br>Idioma original: {{ pelicula.idioma }}
+                            {% endif %}
+                        </p>
+                        <div class="detalle-inline-buttons">
+                            <button class="btn-primary btn-lg">▶ Reproducir</button>
+                            <a href="{{ url_for('peliculas') }}" class="btn-secondary btn-lg">← Volver</a>
+                        </div>
+                    </div>
 
-    <section class="detalle-info">
-        <h2>Sinopsis</h2>
-        <p>{{ pelicula.overview }}</p>
-    </section>
-</main>
+                    <div class="detalle-inline-poster-wrapper">
+                        <div class="detalle-inline-poster"
+                             style="{% if pelicula.poster %}background-image: url('{{ pelicula.poster }}');{% endif %}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="detalle-inline-body">
+                <div class="detalle-inline-section">
+                    <h2 class="detalle-inline-section-title">Sinopsis</h2>
+                    <p class="detalle-inline-overview">
+                        {{ pelicula.overview or 'Sin sinopsis disponible.' }}
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- MÁS TÍTULOS DE ESTE GÉNERO (RECOMENDADAS) -->
+        <section class="row" style="margin-top: 20px;">
+            <div class="row-header">
+                <h2 class="row-title">Más títulos de este género</h2>
+                <p class="row-subtitle">
+                    Más películas del género: {{ pelicula.genero }}
+                </p>
+            </div>
+
+            {% if recomendadas %}
+            <div class="movies-grid">
+                {% for rec in recomendadas %}
+                <a href="{{ url_for('detalle_pelicula', movie_id=rec.id) }}" class="movie-link">
+                    <article class="movie-card-grid">
+                        <div class="movie-poster-wrapper">
+                            <div class="movie-poster"
+                                 style="{% if rec.poster %}background-image: url('{{ rec.poster }}');{% endif %}">
+                            </div>
+                        </div>
+                        <div class="movie-info">
+                            <h3 class="movie-title">{{ rec.titulo }}</h3>
+
+                            <div class="movie-rating-row">
+                                <div class="movie-rating-badge">
+                                    <span class="movie-rating-star">★</span>
+                                    <span class="movie-rating-score">
+                                        {% if rec.promedio %}
+                                            {{ rec.promedio|float|round(1) }}/10
+                                        {% else %}
+                                            N/A
+                                        {% endif %}
+                                    </span>
+                                </div>
+                                <span class="movie-votes">{{ rec.votos }} votos</span>
+                            </div>
+
+                            <p class="movie-meta">
+                                {{ rec.genero }} • {{ rec.fecha }}
+                            </p>
+                        </div>
+                    </article>
+                </a>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p style="color: #9ca3af; text-align: center; margin-top: 2rem;">
+                No se encontraron más títulos de este género.
+            </p>
+            {% endif %}
+        </section>
+    </main>
+
+    <script>
+        // Dropdown usuario (mismo código que en index / peliculas)
+        document.addEventListener('click', function (e) {
+            const toggle = document.querySelector('.user-menu-toggle');
+            const dropdown = document.querySelector('.user-menu-dropdown');
+
+            if (!toggle || !dropdown) return;
+
+            if (toggle.contains(e.target)) {
+                const isVisible = dropdown.style.display === 'block';
+                dropdown.style.display = isVisible ? 'none' : 'block';
+            } else if (!dropdown.contains(e.target)) {
+                dropdown.style.display = 'none';
+            }
+        });
+    </script>
+
 </body>
+
 </html>
