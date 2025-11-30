@@ -8,6 +8,8 @@ from models import (
     obtener_usuario_por_email,
     buscar_peliculas,
     obtener_recomendadas_por_genero,
+    obtener_peliculas,        # <-- nuevo
+    contar_peliculas
 )
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -101,33 +103,44 @@ def detalle_pelicula(movie_id):
         recomendadas=recomendadas
     )
 
+
 @app.route("/peliculas")
 def peliculas():
-    # Parámetros de búsqueda / filtros
-    q = request.args.get("q", "").strip()          # texto de búsqueda
+    # Parámetros de búsqueda y filtros
+    q = request.args.get("q", "").strip()
     genero = request.args.get("genero", "").strip()
     anio = request.args.get("anio", "").strip()
 
-    # Si no hay filtros, usamos el listado normal (18)
-    if not q and not genero and not anio:
-        peliculas = obtener_peliculas(limit=18)
-    else:
-        # Convertir año a int si viene algo
-        anio_int = int(anio) if anio.isdigit() else None
-        peliculas = buscar_peliculas(
-            texto=q or None,
-            genero=genero or None,
-            anio=anio_int,
-            limit=60   # un poco más amplio cuando se filtra
-        )
+    # Parámetro de paginación
+    page = request.args.get("page", 1, type=int)
+    per_page = 24  # Películas por página
 
-    # Pasamos los valores actuales de filtro al template para mantenerlos
+    # Obtener películas con paginación
+    peliculas = obtener_peliculas(
+        busqueda=q if q else None,
+        genero=genero if genero else None,
+        anio=anio if anio else None,
+        limit=per_page,
+        offset=(page - 1) * per_page
+    )
+
+    # Obtener el total de películas para calcular páginas
+    total_peliculas = contar_peliculas(
+        busqueda=q if q else None,
+        genero=genero if genero else None,
+        anio=anio if anio else None
+    )
+
+    total_pages = (total_peliculas + per_page - 1) // per_page  # Redondeo hacia arriba
+
     return render_template(
         "Peliculas.html",
         peliculas=peliculas,
         q=q,
         genero_actual=genero,
-        anio_actual=anio
+        anio_actual=anio,
+        page=page,
+        total_pages=total_pages
     )
 
 @app.route("/series")

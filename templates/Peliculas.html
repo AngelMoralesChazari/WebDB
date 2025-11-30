@@ -44,10 +44,7 @@
         <!-- CATÁLOGO -->
         <section class="row" style="margin-top: 20px;">
             <div class="row-header">
-                <h2 class="row-title">Catálogo de películas</h2>
-                <p class="row-subtitle">
-                    Explora todas las películas disponibles en la plataforma.
-                </p>
+                <h2 class="row-title">Catálogo</h2>
             </div>
 
             <!-- PANEL DE BÚSQUEDA Y FILTROS -->
@@ -62,11 +59,13 @@
                     <select id="genero" name="genero">
                         <option value="">Todos</option>
                         <option value="Action" {% if genero_actual=='Action' %}selected{% endif %}>Acción</option>
-                        <option value="Adventure" {% if genero_actual=='Adventure' %}selected{% endif %}>Aventura</option>
+                        <option value="Adventure" {% if genero_actual=='Adventure' %}selected{% endif %}>Aventura
+                        </option>
                         <option value="Comedy" {% if genero_actual=='Comedy' %}selected{% endif %}>Comedia</option>
                         <option value="Drama" {% if genero_actual=='Drama' %}selected{% endif %}>Drama</option>
                         <option value="Horror" {% if genero_actual=='Horror' %}selected{% endif %}>Terror</option>
-                        <option value="Animation" {% if genero_actual=='Animation' %}selected{% endif %}>Animación</option>
+                        <option value="Animation" {% if genero_actual=='Animation' %}selected{% endif %}>Animación
+                        </option>
                     </select>
                 </div>
 
@@ -90,7 +89,7 @@
                     <article class="movie-card-grid">
                         <div class="movie-poster-wrapper">
                             <div class="movie-poster"
-                                 style="{% if peli.poster %}background-image: url('{{ peli.poster }}');{% endif %}">
+                                style="{% if peli.poster %}background-image: url('{{ peli.poster }}');{% endif %}">
                             </div>
                         </div>
 
@@ -102,9 +101,9 @@
                                     <span class="movie-rating-star">★</span>
                                     <span class="movie-rating-score">
                                         {% if peli.promedio %}
-                                            {{ peli.promedio|float|round(1) }}/10
+                                        {{ peli.promedio|float|round(1) }}/10
                                         {% else %}
-                                            N/A
+                                        N/A
                                         {% endif %}
                                     </span>
                                 </div>
@@ -119,6 +118,49 @@
                 </a>
                 {% endfor %}
             </div>
+
+            <!-- PAGINACIÓN -->
+            {% if total_pages > 1 %}
+            <div class="pagination">
+                <!-- Botón Anterior -->
+                {% if page > 1 %}
+                <a href="{{ url_for('peliculas', q=q, genero=genero_actual, anio=anio_actual, page=page-1) }}"
+                    class="pagination-btn pagination-prev">
+                    ← Anterior
+                </a>
+                {% else %}
+                <span class="pagination-btn pagination-disabled">← Anterior</span>
+                {% endif %}
+
+                <!-- Números de página -->
+                <div class="pagination-numbers">
+                    {% set start_page = ((page - 1) // 10) * 10 + 1 %}
+                    {% set end_page = [start_page + 9, total_pages] | min %}
+
+                    {% for p in range(start_page, end_page + 1) %}
+                    {% if p == page %}
+                    <span class="pagination-number pagination-active">{{ p }}</span>
+                    {% else %}
+                    <a href="{{ url_for('peliculas', q=q, genero=genero_actual, anio=anio_actual, page=p) }}"
+                        class="pagination-number">
+                        {{ p }}
+                    </a>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+
+                <!-- Botón Siguiente -->
+                {% if page < total_pages %} <a
+                    href="{{ url_for('peliculas', q=q, genero=genero_actual, anio=anio_actual, page=page|int + 1) }}"
+                    class="pagination-btn pagination-next">
+                    Siguiente →
+                    </a>
+                    {% else %}
+                    <span class="pagination-btn pagination-disabled">Siguiente →</span>
+                    {% endif %}
+            </div>
+            {% endif %}
+
             {% else %}
             <p style="color: #9ca3af; text-align: center; margin-top: 2rem;">
                 No se encontraron películas con esos filtros.

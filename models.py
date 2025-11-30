@@ -1,84 +1,107 @@
 from db import get_connection
 
-def obtener_peliculas(limit = 20):
-    print("obtener_peliculas() llamado, limit =", limit)
 
+def obtener_peliculas(busqueda=None, genero=None, anio=None, limit=20, offset=0):
     conn = get_connection()
-    if not conn:
-        print(" === No se pudo obtener la conexión === ")
-        return []
-
-    print("Conexión obtenida")
+    cursor = conn.cursor()
 
     query = """
-        SELECT TOP (?) 
-            Movie_ID,
-            Release_Date,
-            Title,
-            Overview,
-            Popularity,
-            Vote_Count,
-            Vote_Average,
-            Original_Language,
-            Genre,
-            Poster_Url
-        FROM dbo.mymoviedb
-        ORDER BY Popularity DESC;
+    SELECT 
+        Movie_ID,
+        Title,
+        Genre,
+        Release_Date,
+        Poster_Url,
+        Vote_Average,
+        Vote_Count,
+        Overview
+    FROM dbo.mymoviedb 
+    WHERE 1=1
     """
+    params = []
+
+    if busqueda:
+        query += " AND (Title LIKE ? OR Overview LIKE ?)"
+        params.extend([f"%{busqueda}%", f"%{busqueda}%"])
+
+    if genero:
+        query += " AND Genre LIKE ?"
+        params.append(f"%{genero}%")
+
+    if anio:
+        query += " AND YEAR(Release_Date) = ?"
+        params.append(anio)
+
+    query += " ORDER BY Popularity DESC"
+    query += " OFFSET ? ROWS FETCH NEXT ? ROWS ONLY"
+    params.extend([offset, limit])
+
+    cursor.execute(query, params)
+    rows = cursor.fetchall()
+    conn.close()
 
     peliculas = []
-
-    try:
-        cursor = conn.cursor()
-        cursor.execute(query, (limit,))
-        print("=== Consulta ejecutada")
-        rows = cursor.fetchall()
-        print("=== Filas recibidas:", len(rows))
-
-        for row in rows:
-            peliculas.append({
-                "id": row.Movie_ID,
-                "fecha": row.Release_Date,
-                "titulo": row.Title,
-                "overview": row.Overview,
-                "popularidad": row.Popularity,
-                "votos": row.Vote_Count,
-                "promedio": row.Vote_Average,
-                "idioma": row.Original_Language,
-                "genero": row.Genre,
-                "poster": row.Poster_Url,
-            })
-
-        print("=== Películas añadidas como un diccionario:", len(peliculas))
-
-    except Exception as e:
-        print(f"Error al obtener películas: {e}")
-    finally:
-        conn.close()
-        print("!= Conexión cerrada")
+    for row in rows:
+        peliculas.append({
+            "id": row.Movie_ID,
+            "titulo": row.Title,
+            "genero": row.Genre,
+            "fecha": row.Release_Date,
+            "poster": row.Poster_Url,
+            "promedio": row.Vote_Average,
+            "votos": row.Vote_Count,
+            "overview": row.Overview
+        })
 
     return peliculas
 
-#Tendencias
+
+def contar_peliculas(busqueda=None, genero=None, anio=None):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    query = "SELECT COUNT(*) FROM dbo.mymoviedb WHERE 1=1"
+    params = []
+
+    if busqueda:
+        query += " AND (Title LIKE ? OR Overview LIKE ?)"
+        params.extend([f"%{busqueda}%", f"%{busqueda}%"])
+
+    if genero:
+        query += " AND Genre LIKE ?"
+        params.append(f"%{genero}%")
+
+    if anio:
+        query += " AND YEAR(Release_Date) = ?"
+        params.append(anio)
+
+    cursor.execute(query, params)
+    total = cursor.fetchone()[0]
+    conn.close()
+
+    return total
+
+
+# Tendencias
 def obtener_pelicula_aleatoria():
     conn = get_connection()
     if not conn:
         return None
 
     query = """
-        SELECT TOP 1
-            Movie_ID,
-            Release_Date,
-            Title,
-            Overview,
-            Popularity,
-            Vote_Count,
-            Vote_Average,
-            Original_Language,
-            Genre,
-            Poster_Url
-        FROM dbo.mymoviedb
-        ORDER BY NEWID();
+    SELECT TOP 1
+        Movie_ID,
+        Release_Date,
+        Title,
+        Overview,
+        Popularity,
+        Vote_Count,
+        Vote_Average,
+        Original_Language,
+        Genre,
+        Poster_Url
+    FROM dbo.mymoviedb
+    ORDER BY NEWID();
     """
 
     try:
@@ -109,26 +132,27 @@ def obtener_pelicula_aleatoria():
     finally:
         conn.close()
 
-#Recomendadas
-def obtener_peliculas_aleatorias(limit = 10):
+
+# Recomendadas
+def obtener_peliculas_aleatorias(limit=10):
     conn = get_connection()
     if not conn:
         return []
 
     query = f"""
-        SELECT TOP ({limit})
-            Movie_ID,
-            Release_Date,
-            Title,
-            Overview,
-            Popularity,
-            Vote_Count,
-            Vote_Average,
-            Original_Language,
-            Genre,
-            Poster_Url
-        FROM dbo.mymoviedb
-        ORDER BY NEWID();
+    SELECT TOP ({limit})
+        Movie_ID,
+        Release_Date,
+        Title,
+        Overview,
+        Popularity,
+        Vote_Count,
+        Vote_Average,
+        Original_Language,
+        Genre,
+        Poster_Url
+    FROM dbo.mymoviedb
+    ORDER BY NEWID();
     """
 
     peliculas = []
@@ -157,25 +181,26 @@ def obtener_peliculas_aleatorias(limit = 10):
 
     return peliculas
 
+
 def obtener_pelicula_por_id(movie_id):
     conn = get_connection()
     if not conn:
         return None
 
     query = """
-        SELECT
-            Movie_ID,
-            Release_Date,
-            Title,
-            Overview,
-            Popularity,
-            Vote_Count,
-            Vote_Average,
-            Original_Language,
-            Genre,
-            Poster_Url
-        FROM dbo.mymoviedb
-        WHERE Movie_ID = ?;
+    SELECT
+        Movie_ID,
+        Release_Date,
+        Title,
+        Overview,
+        Popularity,
+        Vote_Count,
+        Vote_Average,
+        Original_Language,
+        Genre,
+        Poster_Url
+    FROM dbo.mymoviedb
+    WHERE Movie_ID = ?;
     """
 
     try:
@@ -206,6 +231,7 @@ def obtener_pelicula_por_id(movie_id):
     finally:
         conn.close()
 
+
 def obtener_recomendadas_por_genero(genero, movie_id_excluir=None, limit=12):
     """
     Devuelve películas del mismo género (o que contengan ese género en el campo Genre),
@@ -216,19 +242,19 @@ def obtener_recomendadas_por_genero(genero, movie_id_excluir=None, limit=12):
         return []
 
     query = """
-        SELECT TOP ({limit})
-            Movie_ID,
-            Release_Date,
-            Title,
-            Overview,
-            Popularity,
-            Vote_Count,
-            Vote_Average,
-            Original_Language,
-            Genre,
-            Poster_Url
-        FROM dbo.mymoviedb
-        WHERE Genre LIKE ?
+    SELECT TOP ({limit})
+        Movie_ID,
+        Release_Date,
+        Title,
+        Overview,
+        Popularity,
+        Vote_Count,
+        Vote_Average,
+        Original_Language,
+        Genre,
+        Poster_Url
+    FROM dbo.mymoviedb
+    WHERE Genre LIKE ?
     """.format(limit=limit)
 
     params = [f"%{genero}%"]
@@ -265,6 +291,7 @@ def obtener_recomendadas_por_genero(genero, movie_id_excluir=None, limit=12):
 
     return peliculas
 
+
 # Usuarios
 def registrar_usuario(nombre, email, password_hash):
     conn = get_connection()
@@ -273,8 +300,8 @@ def registrar_usuario(nombre, email, password_hash):
         return False
 
     query = """
-        INSERT INTO dbo.Usuarios (Nombre, Email, Contraseña)
-        VALUES (?, ?, ?);
+    INSERT INTO dbo.Usuarios (Nombre, Email, Contraseña)
+    VALUES (?, ?, ?);
     """
 
     try:
@@ -298,9 +325,9 @@ def obtener_usuario_por_email(email):
         return None
 
     query = """
-        SELECT Usuario_ID, Nombre, Email, Contraseña, FechaRegistro
-        FROM dbo.Usuarios
-        WHERE Email = ?;
+    SELECT Usuario_ID, Nombre, Email, Contraseña, FechaRegistro
+    FROM dbo.Usuarios
+    WHERE Email = ?;
     """
 
     try:
@@ -325,6 +352,7 @@ def obtener_usuario_por_email(email):
         conn.close()
         print("!= Conexión cerrada en obtener_usuario_por_email")
 
+
 def buscar_peliculas(texto=None, genero=None, anio=None, limit=50):
     conn = get_connection()
     if not conn:
@@ -333,19 +361,19 @@ def buscar_peliculas(texto=None, genero=None, anio=None, limit=50):
 
     # Construimos la consulta dinámica
     base_query = """
-        SELECT TOP ({limit})
-            Movie_ID,
-            Release_Date,
-            Title,
-            Overview,
-            Popularity,
-            Vote_Count,
-            Vote_Average,
-            Original_Language,
-            Genre,
-            Poster_Url
-        FROM dbo.mymoviedb
-        WHERE 1=1
+    SELECT TOP ({limit})
+        Movie_ID,
+        Release_Date,
+        Title,
+        Overview,
+        Popularity,
+        Vote_Count,
+        Vote_Average,
+        Original_Language,
+        Genre,
+        Poster_Url
+    FROM dbo.mymoviedb
+    WHERE 1=1
     """.format(limit=limit)
 
     params = []
