@@ -357,3 +357,250 @@ body {
 .movie-link:visited {
   color: inherit;
 }
+
+/* Contenedor del menú de usuario */
+.user-menu {
+    position: relative;
+    display: inline-block;
+}
+
+/* Reutilizamos estilo de btn-login, solo ajustamos si hace falta */
+.user-menu-toggle {
+    cursor: pointer;
+}
+
+/* Dropdown oculto por defecto */
+.user-menu-dropdown {
+    position: absolute;
+    right: 0;
+    top: 110%;
+    background-color: #020617; /* similar a tu header */
+    border: 1px solid #1f2933;
+    border-radius: 4px;
+    min-width: 160px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+    display: none;
+    z-index: 1000;
+}
+
+/* Links dentro del dropdown */
+.user-menu-dropdown a {
+    display: block;
+    padding: 8px 12px;
+    color: #e5e7eb;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.user-menu-dropdown a:hover {
+    background-color: #111827;
+}
+
+/* ===== LOGIN PAGE ===== */
+
+/* Fondo de la página de login: similar al home, pero un poco más difuminado */
+.login-body {
+    background: radial-gradient(circle at top, #1f2937 0, #020617 55%);
+    color: #e5e7eb;
+}
+
+/* Contenedor principal del login */
+.login-page {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 4rem 1.5rem;
+    min-height: calc(100vh - 72px); /* restando la altura aproximada del header */
+}
+
+/* Panel central, tipo tarjeta ancha */
+.login-panel {
+    max-width: 960px;
+    width: 100%;
+}
+
+.login-panel-inner {
+    background: rgba(15, 23, 42, 0.9);
+    border-radius: 12px;
+    padding: 2.5rem 2rem;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+/* Títulos y textos */
+.login-title {
+    font-size: 2.25rem;
+    margin-bottom: 0.25rem;
+    font-weight: 700;
+}
+
+.login-subtitle {
+    font-size: 0.95rem;
+    color: #9ca3af;
+    margin-bottom: 1.5rem;
+}
+
+/* Mensajes flash */
+.flash-messages {
+    list-style: none;
+    margin: 0 0 1rem 0;
+    padding: 0;
+}
+
+.flash-messages li {
+    background: rgba(220, 38, 38, 0.18);
+    border: 1px solid rgba(248, 113, 113, 0.6);
+    color: #fecaca;
+    padding: 0.6rem 0.9rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+}
+
+/* Contenedor de los dos formularios */
+.login-forms {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+@media (max-width: 900px) {
+    .login-forms {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Tarjetas de formulario */
+.card-form {
+    background: rgba(15, 23, 42, 0.95);
+    border-radius: 10px;
+    padding: 1.5rem 1.3rem;
+    border: 1px solid rgba(55, 65, 81, 0.8);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+}
+
+.secondary-card {
+    background: linear-gradient(145deg, rgba(17, 24, 39, 0.95), rgba(30, 64, 175, 0.7));
+    border-color: rgba(96, 165, 250, 0.6);
+}
+
+.card-title {
+    font-size: 1.15rem;
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+}
+
+.card-text {
+    font-size: 0.9rem;
+    color: #e5e7eb;
+    margin-bottom: 0.8rem;
+}
+
+/* Campos de formulario */
+.form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    margin-bottom: 0.9rem;
+    font-size: 0.85rem;
+}
+
+.form-field span {
+    color: #9ca3af;
+}
+
+.form-field input {
+    background-color: #020617;
+    border: 1px solid #4b5563;
+    border-radius: 6px;
+    padding: 0.55rem 0.7rem;
+    color: #f9fafb;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+.form-field input::placeholder {
+    color: #6b7280;
+}
+
+.form-field input:focus {
+    border-color: #ef4444;
+    box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.65);
+    background-color: #020617;
+}
+
+/* Botones llenos del ancho */
+.btn-full {
+    width: 100%;
+    margin-top: 0.5rem;
+}
+
+/* Si ya tienes .btn-primary y .btn-secondary definidos, se aplican.
+   Aquí solo aseguramos tamaños y tipografía coherentes */
+.btn-primary,
+.btn-secondary,
+.btn-login,
+.btn-logout {
+    font-size: 0.9rem;
+    font-weight: 500;
+    border-radius: 999px;
+    padding: 0.45rem 1.1rem;
+}
+
+/* Puedes ajustar estos si quieres diferenciar botones de login/registro */
+.btn-primary {
+    background: #ef4444;
+    border: none;
+    color: #f9fafb;
+}
+
+.btn-primary:hover {
+    background: #f87171;
+}
+
+.btn-secondary {
+    background: transparent;
+    border: 1px solid #e5e7eb;
+    color: #f9fafb;
+}
+
+.btn-secondary:hover {
+    background: rgba(249, 250, 251, 0.08);
+}
+
+/* ===== Dropdown del usuario (por si no lo tenías aún) ===== */
+
+.user-menu {
+    position: relative;
+    display: inline-block;
+}
+
+.user-menu-toggle {
+    cursor: pointer;
+}
+
+.user-menu-dropdown {
+    position: absolute;
+    right: 0;
+    top: 110%;
+    background-color: #020617;
+    border: 1px solid #1f2937;
+    border-radius: 6px;
+    min-width: 160px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.7);
+    display: none;
+    z-index: 1000;
+}
+
+.user-menu-dropdown a {
+    display: block;
+    padding: 0.5rem 0.9rem;
+    color: #e5e7eb;
+    text-decoration: none;
+    font-size: 0.85rem;
+}
+
+.user-menu-dropdown a:hover {
+    background-color: #111827;
+}
