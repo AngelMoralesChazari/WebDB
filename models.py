@@ -1,5 +1,6 @@
 from db import get_connection
 from datetime import datetime, timedelta
+import hashlib
 
 def obtener_peliculas(busqueda=None, genero=None, anio=None, limit=20, offset=0):
     conn = get_connection()
@@ -683,6 +684,170 @@ def eliminar_usuario(usuario_id):
             conn.rollback()
         except:
             pass
+        return False
+    finally:
+        try:
+            conn.close()
+        except:
+            pass
+
+def _tokenizar_numero(numero_tarjeta):
+    """Token simple (SHA256) para simular tokenización. NO es cifrado seguro para prod."""
+    return hashlib.sha256(numero_tarjeta.encode('utf-8')).hexdigest()
+
+def _mask_last4(numero_tarjeta):
+    numero = "".join(filter(str.isdigit, numero_tarjeta))
+    return numero[-4:] if len(numero) >= 4 else numero
+
+def guardar_tarjeta(usuario_id, titular, numero_tarjeta, expiry_month, expiry_year, guardar=True):
+    """
+    Guarda una tarjeta (simulación). NO guarda CVV.
+    Retorna True si se guardó correctamente y el id de la tarjeta en caso de éxito.
+    """
+    conn = get_connection()
+    if not conn:
+        print("=== No se pudo obtener conexión en guardar_tarjeta ===")
+        return False, None
+
+    try:
+        token = _tokenizar_numero(numero_tarjeta)
+        last4 = _mask_last4(numero_tarjeta)
+
+        query = """
+        INSERT INTO dbo.Tarjetas (Usuario_ID, Titular, Last4, Numero_Token, ExpiryMonth, ExpiryYear, Guardar)
+        VALUES (?, ?, ?, ?, ?, ?, ?);
+        """
+        cursor = conn.cursor()
+        cursor.execute(query, (
+            usuario_id,
+            titular,
+            last4,
+            token,
+            int(expiry_month),
+            int(expiry_year),
+            1 if guardar else 0
+        ))
+        conn.commit()
+        # Obtener el id insertado (pyodbc: cursor.lastrowid puede no funcionar; usar SELECT SCOPE_IDENTITY())
+        cursor.execute("SELECT SCOPE_IDENTITY() AS id;")
+        new_id = cursor.fetchone()[0]
+        return True, int(new_id)
+    except Exception as e:
+        print("Error en guardar_tarjeta:", e)
+        try:
+            conn.rollback()
+        except:
+            pass
+        return False, None
+    finally:
+        try:
+            conn.close()
+        except:
+            pass
+
+def obtener_tarjetas_por_usuario(usuario_id):
+    conn = get_connection()
+    if not conn:
+        return []
+    try:
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT Tarjeta_ID, Titular, Last4, ExpiryMonth, ExpiryYear, FechaRegistro, Guardar
+            FROM dbo.Tarjetas
+            WHERE Usuario_ID = ?
+            ORDER BY FechaRegistro DESC;
+        """, (usuario_id,))
+        rows = cursor.fetchall()
+        tarjetas = []
+        for row in rows:
+            tarjetas.append({
+                "tarjeta_id": row.Tarjeta_ID,
+                "titular": row.Titular,
+                "last4": row.Last4,
+                "expiry_month": row.ExpiryMonth,
+                "expiry_year": row.ExpiryYear,
+                "fecha_registro": row.FechaRegistro,
+                "guardar": bool(row.Guardar)
+            })
+        return tarjetas
+    except Exception as e:
+        print("Error en obtener_tarjetas_por_usuario:", e)
+        return []
+    finally:
+        try:
+            conn.close()
+        except:
+            pass
+
+def obtener_tarjeta_por_id(tarjeta_id):
+    conn = get_connection()
+    if not conn:
+        return None
+    try:
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT Tarjeta_ID, Usuario_ID, Titular, Last4, ExpiryMonth, ExpiryYear, FechaRegistro
+            FROM dbo.Tarjetas
+            WHERE Tarjeta_ID = ?;
+        """, (tarjeta_id,))
+        row = cursor.fetchone()
+        if not row:
+            return None
+        return {
+            "tarjeta_id": row.Tarjeta_ID,
+            "usuario_id": row.Usuario_ID,
+            "titular": row.Titular,
+            "last4": row.Last4,
+            "expiry_month": row.ExpiryMonth,
+            "expiry_year": row.ExpiryYear,
+            "fecha_registro": row.FechaRegistro
+        }
+    except Exception as e:
+        print("Error en obtener_tarjeta_por_id:", e)
+        return None
+    finally:
+        try:
+            conn.close()
+        except:
+            pass
+
+def eliminar_tarjeta(tarjeta_id, usuario_id=None):
+    conn = get_connection()
+    if not conn:
+        return False
+    try:
+        cursor = conn.cursor()
+        if usuario_id:
+            cursor.execute("DELETE FROM dbo.Tarjetas WHERE Tarjeta_ID = ? AND Usuario_ID = ?;", (tarjeta_id, usuario_id))
+        else:
+            cursor.execute("DELETE FROM dbo.Tarjetas WHERE Tarjeta_ID = ?;", (tarjeta_id,))
+        affected = cursor.rowcount
+        conn.commit()
+        return affected > 0
+    except Exception as e:
+        print("Error en eliminar_tarjeta:", e)
+        try:
+            conn.rollback()
+        except:
+            pass
+        return False
+    finally:
+        try:
+            conn.close()
+        except:
+            pass
+
+def tiene_tarjeta(usuario_id):
+    conn = get_connection()
+    if not conn:
+        return False
+    try:
+        cursor = conn.cursor()
+        cursor.execute("SELECT COUNT(*) FROM dbo.Tarjetas WHERE Usuario_ID = ?;", (usuario_id,))
+        count = cursor.fetchone()[0]
+        return count > 0
+    except Exception as e:
+        print("Error en tiene_tarjeta:", e)
         return False
     finally:
         try:
