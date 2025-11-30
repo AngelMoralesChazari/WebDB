@@ -68,9 +68,14 @@ def login_post():
         flash("Correo o contraseña incorrectos.")
         return redirect(url_for("login"))
 
-    # Guardar usuario en sesión (sin mensaje de bienvenida)
+    # Guardar usuario en sesión
     session["usuario_id"] = usuario["id"]
     session["usuario_nombre"] = usuario["nombre"]
+
+    # Si es admin (id == 1), redirigir al panel admin
+    if int(usuario["id"]) == 1:
+        flash("Has iniciado sesión como administrador.")
+        return redirect(url_for("admin_users"))
 
     return redirect(url_for("home"))
 
