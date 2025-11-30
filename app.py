@@ -1,4 +1,4 @@
-from flask import Flask, render_template, abort, request, redirect, url_for, flash, session
+from flask import Flask, render_template, abort, request, redirect, url_for, flash, session, jsonify
 from models import (
     obtener_peliculas,
     obtener_pelicula_aleatoria,
@@ -7,6 +7,7 @@ from models import (
     registrar_usuario,
     obtener_usuario_por_email,
     buscar_peliculas,
+    obtener_recomendadas_por_genero,
 )
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -86,7 +87,19 @@ def detalle_pelicula(movie_id):
     pelicula = obtener_pelicula_por_id(movie_id)
     if not pelicula:
         abort(404)
-    return render_template("detalle_pelicula.html", pelicula=pelicula)
+
+    genero = pelicula.get("genero") or ""
+    recomendadas = obtener_recomendadas_por_genero(
+        genero=genero,
+        movie_id_excluir=movie_id,
+        limit=12
+    )
+
+    return render_template(
+        "detalle_pelicula.html",
+        pelicula=pelicula,
+        recomendadas=recomendadas
+    )
 
 @app.route("/peliculas")
 def peliculas():
@@ -130,6 +143,26 @@ def logout():
     session.pop("usuario_id", None)
     session.pop("usuario_nombre", None)
     return redirect(url_for("home"))
+
+
+@app.route("/api/pelicula/<int:movie_id>")
+def api_pelicula(movie_id):
+    """Devuelve JSON con los datos de la película y recomendadas"""
+    pelicula = obtener_pelicula_por_id(movie_id)
+    if not pelicula:
+        return jsonify({"error": "Película no encontrada"}), 404
+
+    genero = pelicula.get("genero") or ""
+    recomendadas = obtener_recomendadas_por_genero(
+        genero=genero,
+        movie_id_excluir=movie_id,
+        limit=12
+    )
+
+    return jsonify({
+        "pelicula": pelicula,
+        "recomendadas": recomendadas
+    })
 
 if __name__ == "__main__":
     app.run(debug=True, host="127.0.0.1", port=8000)

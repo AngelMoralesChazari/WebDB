@@ -206,6 +206,65 @@ def obtener_pelicula_por_id(movie_id):
     finally:
         conn.close()
 
+def obtener_recomendadas_por_genero(genero, movie_id_excluir=None, limit=12):
+    """
+    Devuelve películas del mismo género (o que contengan ese género en el campo Genre),
+    ordenadas por popularidad, excluyendo opcionalmente una película concreta.
+    """
+    conn = get_connection()
+    if not conn:
+        return []
+
+    query = """
+        SELECT TOP ({limit})
+            Movie_ID,
+            Release_Date,
+            Title,
+            Overview,
+            Popularity,
+            Vote_Count,
+            Vote_Average,
+            Original_Language,
+            Genre,
+            Poster_Url
+        FROM dbo.mymoviedb
+        WHERE Genre LIKE ?
+    """.format(limit=limit)
+
+    params = [f"%{genero}%"]
+
+    if movie_id_excluir:
+        query += " AND Movie_ID <> ?"
+        params.append(movie_id_excluir)
+
+    query += " ORDER BY Popularity DESC;"
+
+    peliculas = []
+    try:
+        cursor = conn.cursor()
+        cursor.execute(query, tuple(params))
+        rows = cursor.fetchall()
+
+        for row in rows:
+            peliculas.append({
+                "id": row.Movie_ID,
+                "fecha": row.Release_Date,
+                "titulo": row.Title,
+                "overview": row.Overview,
+                "popularidad": row.Popularity,
+                "votos": row.Vote_Count,
+                "promedio": row.Vote_Average,
+                "idioma": row.Original_Language,
+                "genero": row.Genre,
+                "poster": row.Poster_Url,
+            })
+    except Exception as e:
+        print(f"Error al obtener recomendadas por género: {e}")
+    finally:
+        conn.close()
+
+    return peliculas
+
 # Usuarios
 def registrar_usuario(nombre, email, password_hash):
     conn = get_connection()
