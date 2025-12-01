@@ -264,11 +264,20 @@ def rentar_pelicula(movie_id):
         return redirect(url_for("login"))
 
     if request.method == "GET":
+        # AGREGAR: Obtener información de la película
+        pelicula = obtener_pelicula_por_id(movie_id)
+        if not pelicula:
+            flash("Película no encontrada.")
+            return redirect(url_for("peliculas"))
+
         tarjetas = obtener_tarjetas_por_usuario(usuario_id)
         if not tarjetas or len(tarjetas) == 0:
             flash("Necesitas registrar una tarjeta antes de rentar.")
             return redirect(url_for("tarjeta_agregar", next=url_for("rentar_pelicula", movie_id=movie_id)))
-        return render_template("rentar.html", movie_id=movie_id, tarjetas=tarjetas, dias=3, monto=50.00)
+
+        # MODIFICAR: Pasar poster_url al template
+        return render_template("rentar.html", movie_id=movie_id, tarjetas=tarjetas, dias=3, monto=50.00,
+                               poster_url=pelicula.get('poster'))
 
     # POST
     tarjeta_id = request.form.get("tarjeta_id")
