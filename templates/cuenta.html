@@ -50,8 +50,9 @@
 
       <!-- Filtros -->
       <div style="margin: 0.75rem 0 1.25rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
-        <a href="{{ url_for('cuenta') }}" class="btn-secondary btn-sm {% if not filtro_actual %}btn-primary{% endif %}">
-          Todas
+        <a href="{{ url_for('cuenta', filtro='activas') }}"
+          class="btn-secondary btn-sm {% if filtro_actual == 'activas' %}btn-primary{% endif %}">
+          Activas
         </a>
 
         <a href="{{ url_for('cuenta', filtro='por_vencer') }}"

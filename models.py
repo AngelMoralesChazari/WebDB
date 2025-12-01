@@ -604,6 +604,9 @@ def obtener_rentas_por_usuario(usuario_id, filtro=None):
             }
 
             # Aplicar filtro en memoria
+            # Aplicar filtro en memoria
+            if filtro == "activas" and renta["estatus"] == "Devuelta/Cancelada":
+                continue
             if filtro == "por_vencer" and renta["estatus"] != "Por vencer":
                 continue
             if filtro == "vencidas" and renta["estatus"] != "Vencida":

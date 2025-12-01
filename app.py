@@ -243,6 +243,11 @@ def cuenta():
         return redirect(url_for("login"))
 
     filtro = request.args.get("filtro", "").strip() or None
+
+    # Si NO hay filtro, establecer 'activas' como filtro por defecto
+    if filtro is None:
+        filtro = "activas"
+
     rentas = obtener_rentas_por_usuario(usuario_id, filtro=filtro)
     tarjetas = obtener_tarjetas_por_usuario(usuario_id)
     return render_template("cuenta.html", rentas=rentas, filtro_actual=filtro, tarjetas=tarjetas)
