@@ -4,7 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ede0590d-988f-4355-be99-a7223e8db87c" name="Changes" comment="" />
+    <list default="true" id="ede0590d-988f-4355-be99-a7223e8db87c" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/styles.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/detalle_pelicula.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/detalle_pelicula.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/rentar.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/rentar.html" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -74,7 +81,7 @@
       <recent name="C:\Users\artes\Documentos\WebBD\routes" />
     </key>
   </component>
-  <component name="RunManager" selected="Flask server.WebBD">
+  <component name="RunManager" selected="Python.test_db">
     <configuration name="index.html" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/WebBD/templates/index.html" useBuiltInWebServerPort="true">
       <method v="2" />
     </configuration>
@@ -109,7 +116,7 @@
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="WORKING_DIRECTORY" value="" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
@@ -119,7 +126,6 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="JavaScript Debug.index.html" />
         <item itemvalue="Python.test_db" />
       </list>
     </recent_temporary>
@@ -127,7 +133,6 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-a71380e98a7c-JavaScript-PY-252.28238.29" />
         <option value="bundled-python-sdk-a101402ee41c-968fe969f28a-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-252.28238.29" />
       </set>
     </attachedChunks>
@@ -155,7 +160,10 @@
       <workItem from="1764470581829" duration="546000" />
       <workItem from="1764471205922" duration="10881000" />
       <workItem from="1764519842615" duration="10440000" />
-      <workItem from="1764534294546" duration="8704000" />
+      <workItem from="1764534294546" duration="8975000" />
+      <workItem from="1764621304612" duration="112000" />
+      <workItem from="1764622454673" duration="1026000" />
+      <workItem from="1764697393414" duration="77000" />
     </task>
     <servers />
   </component>

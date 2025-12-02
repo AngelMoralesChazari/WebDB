@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8" />
-  <title>Rentar Película - Pago Simulado</title>
+  <title>Rentar Película</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
 </head>
 
@@ -21,7 +21,7 @@
   </header>
 
   <main class="main-content rentar-page" style="padding: 2rem 4rem;">
-    <h1>Rentar Película (Pago Simulado)</h1>
+    <h1>Rentar Película</h1>
 
     <div class="rentar-container">
       <!-- IZQUIERDA: info y formulario -->
@@ -44,7 +44,6 @@
             </select>
           </div>
 
-          <!-- Enviamos dias y monto por si el backend los espera desde el form -->
           <input type="hidden" name="dias" value="{{ dias }}">
           <input type="hidden" name="monto" value="{{ monto }}">
 
@@ -62,7 +61,6 @@
         {% endif %}
       </div>
 
-      <!-- DERECHA: poster -->
       <div class="rentar-poster">
         <img src="{{ poster_url or url_for('static', filename='imagenes/default_poster.jpg') }}"
           alt="Poster de la película" loading="lazy"

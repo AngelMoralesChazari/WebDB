@@ -12,7 +12,6 @@ from flask import (
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 
-# Importa las funciones necesarias desde models.py (asegúrate de haberlas añadido a models.py)
 from models import (
     obtener_peliculas,
     obtener_pelicula_aleatoria,
@@ -27,7 +26,6 @@ from models import (
     obtener_rentas_por_usuario,
     tiene_renta_activa,
     eliminar_usuario,
-    # Funciones de tarjetas (asegúrate de tenerlas en models.py)
     guardar_tarjeta,
     obtener_tarjetas_por_usuario,
     obtener_tarjeta_por_id,
@@ -35,24 +33,15 @@ from models import (
     tiene_tarjeta,
 )
 
-# Si models.py no contiene alguna función, el import fallará: añade las funciones en models.py antes.
-
 app = Flask(__name__)
-app.secret_key = "test"  # Cambia en producción
+app.secret_key = "test"
 
-
-# ---------------------
-# Login (GET) - filtrar flashes no relacionados con login
-# ---------------------
 @app.route("/login", methods=["GET"])
 def login():
-    # Filtrar mensajes flash para mostrar solo los relacionados con login en esta vista.
-    # Flask guarda flashes en session['_flashes'] como lista de (category, message).
     flashes = session.get("_flashes", [])
     mensajes_a_mantener = []
     for category, message in flashes:
         msg_lower = (message or "").lower()
-        # Palabras clave relacionadas con login/registro que queremos mantener
         if any(
             kw in msg_lower
             for kw in [
@@ -66,14 +55,11 @@ def login():
             ]
         ):
             mensajes_a_mantener.append((category, message))
-    # Sobrescribir los flashes con los filtrados
+
     session["_flashes"] = mensajes_a_mantener
     return render_template("login.html")
 
-
-# ---------------------
 # Registro
-# ---------------------
 @app.route("/registro", methods=["POST"])
 def registro():
     nombre = request.form.get("nombre")
@@ -99,10 +85,7 @@ def registro():
     flash("Registro exitoso, ahora puedes iniciar sesión.")
     return redirect(url_for("login"))
 
-
-# ---------------------
-# Login (POST) - flujo normal usando BD y redirección a admin si id == 1
-# ---------------------
+# Login (POST)
 @app.route("/login", methods=["POST"])
 def login_post():
     email = request.form.get("email")
@@ -121,8 +104,7 @@ def login_post():
         flash("Correo o contraseña incorrectos.")
         return redirect(url_for("login"))
 
-    # Guardar usuario en sesión
-    # Aseguramos que sea entero al guardar
+    # Guardar usuario en sesión y aseguro que sea entero al guardar
     try:
         usuario_id = int(usuario["id"])
     except Exception:
@@ -130,7 +112,7 @@ def login_post():
     session["usuario_id"] = usuario_id
     session["usuario_nombre"] = usuario["nombre"]
 
-    # Si es admin (id == 1), redirigir al panel admin
+    # Si es admin (id == 1)
     try:
         if int(usuario_id) == 1:
             flash("Has iniciado sesión como administrador.")
@@ -140,20 +122,14 @@ def login_post():
 
     return redirect(url_for("home"))
 
-
-# ---------------------
 # Logout
-# ---------------------
 @app.route("/logout")
 def logout():
     session.pop("usuario_id", None)
     session.pop("usuario_nombre", None)
     return redirect(url_for("home"))
 
-
-# ---------------------
-# Home / Index
-# ---------------------
+# Home
 @app.route("/")
 def home():
     pelicula_destacada = obtener_pelicula_aleatoria()
@@ -166,10 +142,7 @@ def home():
         recomendadas=recomendadas,
     )
 
-
-# ---------------------
 # Películas (listado con paginación y filtros)
-# ---------------------
 @app.route("/peliculas")
 def peliculas():
     q = request.args.get("q", "").strip()
@@ -203,18 +176,12 @@ def peliculas():
         total_pages=total_pages,
     )
 
-
-# ---------------------
 # Series (placeholder)
-# ---------------------
 @app.route("/series")
 def series():
     return render_template("series.html")
 
-
-# ---------------------
 # Detalle de película
-# ---------------------
 @app.route("/pelicula/<int:movie_id>")
 def detalle_pelicula(movie_id):
     pelicula = obtener_pelicula_por_id(movie_id)
@@ -231,10 +198,7 @@ def detalle_pelicula(movie_id):
 
     return render_template("detalle_pelicula.html", pelicula=pelicula, recomendadas=recomendadas, rentada=rentada)
 
-
-# ---------------------
 # Cuenta (mis rentas)
-# ---------------------
 @app.route("/cuenta")
 def cuenta():
     usuario_id = session.get("usuario_id")
@@ -252,10 +216,7 @@ def cuenta():
     tarjetas = obtener_tarjetas_por_usuario(usuario_id)
     return render_template("cuenta.html", rentas=rentas, filtro_actual=filtro, tarjetas=tarjetas)
 
-
-# ---------------------
 # Rutas de rentas: rentar / devolver / cancelar
-# ---------------------
 @app.route("/rentas")
 def sistema_rentas():
     return redirect(url_for("cuenta"))
@@ -280,7 +241,7 @@ def rentar_pelicula(movie_id):
             flash("Necesitas registrar una tarjeta antes de rentar.")
             return redirect(url_for("tarjeta_agregar", next=url_for("rentar_pelicula", movie_id=movie_id)))
 
-        # MODIFICAR: Pasar poster_url al template
+        # Pasar poster_url al template
         return render_template("rentar.html", movie_id=movie_id, tarjetas=tarjetas, dias=3, monto=50.00,
                                poster_url=pelicula.get('poster'))
 
@@ -361,10 +322,7 @@ def cancelar_renta(renta_id):
         flash("Renta cancelada.")
     return redirect(url_for("cuenta"))
 
-
-# ---------------------
 # Tarjetas: agregar / eliminar
-# ---------------------
 @app.route("/tarjeta/agregar", methods=["GET", "POST"])
 def tarjeta_agregar():
     usuario_id = session.get("usuario_id")
@@ -375,10 +333,10 @@ def tarjeta_agregar():
     if request.method == "GET":
         return render_template("tarjeta_agregar.html", next=request.args.get("next"))
 
-    # POST: procesar datos de la tarjeta (simulación)
+    # POST: procesar datos de la tarjeta
     titular = request.form.get("titular", "").strip()
     numero = request.form.get("numero", "").replace(" ", "")
-    expiry = request.form.get("expiry", "").strip()  # formato MM/YY
+    expiry = request.form.get("expiry", "").strip()
     cvv = request.form.get("cvv", "").strip()
     guardar = True if request.form.get("guardar") == "on" else False
 
@@ -401,7 +359,7 @@ def tarjeta_agregar():
         flash("Formato de expiración inválido. Usa MM/YY.")
         return redirect(url_for("tarjeta_agregar", next=request.args.get("next")))
 
-    # No almacenamos CVV por seguridad (simulación)
+    # CVV
     ok, new_id = guardar_tarjeta(usuario_id, titular, numero, month, year, guardar=guardar)
     if not ok:
         flash("No se pudo guardar la tarjeta. Inténtalo más tarde.")
@@ -428,10 +386,7 @@ def tarjeta_eliminar(tarjeta_id):
         flash("No fue posible eliminar la tarjeta.")
     return redirect(url_for("cuenta"))
 
-
-# ---------------------
 # API: pelicula
-# ---------------------
 @app.route("/api/pelicula/<int:movie_id>")
 def api_pelicula(movie_id):
     pelicula = obtener_pelicula_por_id(movie_id)
@@ -443,10 +398,7 @@ def api_pelicula(movie_id):
 
     return jsonify({"pelicula": pelicula, "recomendadas": recomendadas})
 
-
-# ---------------------
 # Admin: listar usuarios y eliminar usuario
-# ---------------------
 @app.route("/admin/usuarios")
 def admin_users():
     usuario_actual = session.get("usuario_id")
@@ -459,7 +411,6 @@ def admin_users():
         return redirect(url_for("cuenta"))
 
     # Obtener lista de usuarios
-    # Aquí usamos directamente la consulta como ejemplo
     from db import get_connection
 
     conn = get_connection()
@@ -508,9 +459,5 @@ def admin_eliminar_usuario(usuario_id):
         flash("No se pudo eliminar el usuario. Revisa los logs.")
     return redirect(url_for("admin_users"))
 
-
-# ---------------------
-# Ejecutar app
-# ---------------------
 if __name__ == "__main__":
     app.run(debug=True, host="127.0.0.1", port=8000)

@@ -1986,7 +1986,6 @@ body {
   box-shadow: 0 36px 86px rgba(0,0,0,0.85);
 }
 
-/* imagen con cover y ligero zoom dentro */
 .rentar-page .rentar-poster img {
   width: 100%;
   height: 100%;
@@ -1996,12 +1995,10 @@ body {
   transition: transform 420ms ease;
 }
 
-/* zoom sutil cuando se pasa el mouse */
 .rentar-page .rentar-poster:hover img {
   transform: scale(1.04);
 }
 
-/* etiqueta en la esquina superior derecha del poster para "Poster" o rating pequeño */
 .rentar-page .rentar-poster::before {
   content: "Póster";
   position: absolute;
@@ -2016,14 +2013,12 @@ body {
   box-shadow: 0 6px 18px rgba(0,0,0,0.6);
 }
 
-/* subtítulo / descripción bajo el select (si existe) */
 .rentar-page .rentar-label + .select-wrap + .save-note {
   margin-top: 0.6rem;
   color: #bcd4ff;
   font-size: 0.85rem;
 }
 
-/* Adaptaciones mobile: apilar, ajustar tamaños */
 @media (max-width: 900px) {
   .rentar-page .rentar-container {
     flex-direction: column-reverse;
@@ -2043,18 +2038,16 @@ body {
   .rentar-page .rentar-actions .btn-secondary { width: 100%; text-align: center; }
 }
 
-/* Soporte degradado si backdrop-filter no está disponible (fallback) */
 @supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
   .rentar-page .rentar-container {
     background: linear-gradient(180deg, rgba(10,12,18,0.80), rgba(10,12,18,0.70));
   }
 }
 
-/* Fallback/estética para póster en /rentar */
 .rentar-page .rentar-poster {
   background-color: rgba(6,8,14,0.45);
   background-image: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.04));
-  min-height: 360px; /* garantiza espacio aunque img no cargue */
+  min-height: 360px;
 }
 
 .rentar-page .rentar-poster img {
@@ -2065,10 +2058,9 @@ body {
   aspect-ratio: 2 / 3;
   transition: transform 420ms ease, opacity 220ms ease;
   min-height: 320px;
-  background-color: rgba(10,12,18,0.6); /* visible si la img falla */
+  background-color: rgba(10,12,18,0.6);
 }
 
-/* Estilo visual cuando se usa fallback (opcional: efecto blur) */
 .rentar-page .rentar-poster img.img-fallback {
   filter: blur(2px) contrast(0.9);
   opacity: 0.95;

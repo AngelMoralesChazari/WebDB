@@ -9,7 +9,6 @@
 </head>
 
 <body>
-    <!-- MISMO HEADER QUE EN INDEX / PELICULAS -->
     <header class="site-header">
         <div class="logo-area">
             <span class="logo-icon">🦅</span>
@@ -41,8 +40,6 @@
     </header>
 
     <main class="main-content peliculas-page">
-
-        <!-- HERO DETALLE (BASADO EN EL PANEL INLINE) -->
         <section class="detalle-inline">
             <button class="detalle-inline-close" onclick="window.history.back()">✕</button>
 
@@ -82,7 +79,7 @@
                             {% if session.get('usuario_id') %}
                             {% if rentada %}
                             <span class="status-badge status-active" style="margin-left: 1rem;">Ya rentada</span>
-                            <!-- Opcional: Botón para ir a devolver desde aquí, aunque es mejor desde "Mi cuenta" -->
+
                             <a href="{{ url_for('cuenta') }}" class="btn-secondary btn-lg" style="margin-left: 1rem;">Ir
                                 a Mi Cuenta</a>
                             {% else %}
@@ -116,7 +113,7 @@
             </div>
         </section>
 
-        <!-- MÁS TÍTULOS DE ESTE GÉNERO (RECOMENDADAS) -->
+        <!-- MÁS TÍTULOS DE ESTE GÉNERO (PELICULAS RECOMENDADAS) -->
         <section class="row" style="margin-top: 20px;">
             <div class="row-header">
                 <h2 class="row-title">Más títulos de este género</h2>
@@ -169,7 +166,7 @@
     </main>
 
     <script>
-        // Dropdown usuario (mismo código que en index / peliculas)
+        // Dropdown usuario
         document.addEventListener('click', function (e) {
             const toggle = document.querySelector('.user-menu-toggle');
             const dropdown = document.querySelector('.user-menu-dropdown');

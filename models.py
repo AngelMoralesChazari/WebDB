@@ -1,9 +1,8 @@
-
 from db import get_connection
 from datetime import datetime, timedelta
 import hashlib
 
-def obtener_peliculas(busqueda=None, genero=None, anio=None, limit=20, offset=0):
+def obtener_peliculas(busqueda = None, genero = None, anio = None, limit = 20, offset = 0):
     conn = get_connection()
     cursor = conn.cursor()
 
@@ -234,7 +233,7 @@ def obtener_pelicula_por_id(movie_id):
         conn.close()
 
 
-def obtener_recomendadas_por_genero(genero, movie_id_excluir=None, limit=12):
+def obtener_recomendadas_por_genero(genero, movie_id_excluir = None, limit = 12):
     """
     Devuelve películas del mismo género (o que contengan ese género en el campo Genre),
     ordenadas por popularidad, excluyendo opcionalmente una película concreta.
@@ -257,7 +256,7 @@ def obtener_recomendadas_por_genero(genero, movie_id_excluir=None, limit=12):
         Poster_Url
     FROM dbo.mymoviedb
     WHERE Genre LIKE ?
-    """.format(limit=limit)
+    """.format(limit = limit)
 
     params = [f"%{genero}%"]
 
@@ -355,7 +354,7 @@ def obtener_usuario_por_email(email):
         print("!= Conexión cerrada en obtener_usuario_por_email")
 
 
-def buscar_peliculas(texto=None, genero=None, anio=None, limit=50):
+def buscar_peliculas(texto = None, genero = None, anio = None, limit = 50):
     conn = get_connection()
     if not conn:
         print("=== No se pudo obtener la conexión en buscar_peliculas ===")
@@ -426,7 +425,7 @@ def buscar_peliculas(texto=None, genero=None, anio=None, limit=50):
 
     return peliculas
 
-# ==== RENTAS ====
+# === RENTAS ===
 
 def crear_renta(usuario_id, movie_id, dias=3, monto=None):
     """
@@ -543,7 +542,7 @@ def actualizar_estado_renta(renta_id, nuevo_estatus, usuario_id=None):
             pass
 
 
-def obtener_rentas_por_usuario(usuario_id, filtro=None):
+def obtener_rentas_por_usuario(usuario_id, filtro = None):
     """
     Devuelve las rentas de un usuario.
     filtro puede ser: None, 'por_vencer', 'vencidas', 'devueltas'
@@ -582,7 +581,7 @@ def obtener_rentas_por_usuario(usuario_id, filtro=None):
             fecha_devolucion = row.FechaDevolucion
             estatus_bd = (row.Estatus or "").strip()
 
-            # Cálculo de estatus "amigable"
+            # Cálculo de estatus
             if estatus_bd.lower() in ("completada", "devuelto", "devuelta", "cancelado", "cancelada"):
                 estatus_mostrado = "Devuelta/Cancelada"
             else:
@@ -603,8 +602,6 @@ def obtener_rentas_por_usuario(usuario_id, filtro=None):
                 "poster": row.Poster_Url,
             }
 
-            # Aplicar filtro en memoria
-            # Aplicar filtro en memoria
             if filtro == "activas" and renta["estatus"] == "Devuelta/Cancelada":
                 continue
             if filtro == "por_vencer" and renta["estatus"] != "Por vencer":
@@ -664,23 +661,20 @@ def eliminar_usuario(usuario_id):
 
     try:
         cursor = conn.cursor()
-        # Iniciar transacción explícita (pyodbc maneja transacción con commit/rollback)
+        # Iniciar transacción
         cursor.execute("BEGIN TRANSACTION;")
 
-        # (Opcional) Comprobar existencia
+        # Comprobar existencia
         cursor.execute("SELECT COUNT(*) FROM dbo.Usuarios WHERE Usuario_ID = ?", (usuario_id,))
         if cursor.fetchone()[0] == 0:
             cursor.execute("ROLLBACK;")
             print(f"eliminar_usuario: usuario {usuario_id} no existe")
             return False
 
-        # 1) Eliminar rentas asociadas (si prefieres conservar histórico cambia a soft-delete o reasignación)
+        # Eliminar rentas asociadas (si prefieres conservar histórico cambia a soft-delete o reasignación)
         cursor.execute("DELETE FROM dbo.Rentas WHERE Usuario_ID = ?", (usuario_id,))
 
-        # 2) Eliminar registros dependientes adicionales si los hubiera (ej: favoritos, reviews)
-        # cursor.execute("DELETE FROM dbo.Favoritos WHERE Usuario_ID = ?", (usuario_id,))
-
-        # 3) Eliminar el usuario
+        # Eliminar el usuario
         cursor.execute("DELETE FROM dbo.Usuarios WHERE Usuario_ID = ?", (usuario_id,))
 
         conn.commit()
@@ -737,7 +731,8 @@ def guardar_tarjeta(usuario_id, titular, numero_tarjeta, expiry_month, expiry_ye
             1 if guardar else 0
         ))
         conn.commit()
-        # Obtener el id insertado (pyodbc: cursor.lastrowid puede no funcionar; usar SELECT SCOPE_IDENTITY())
+        
+        # Obtener el id insertado
         cursor.execute("SELECT SCOPE_IDENTITY() AS id;")
         new_id = cursor.fetchone()[0]
         return True, int(new_id)
