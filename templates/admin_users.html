@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="utf-8" />
   <title>Admin - Usuarios</title>
@@ -11,7 +12,7 @@
       max-width: 1200px;
       margin: 0 auto;
     }
-    
+
     .admin-header {
       display: flex;
       justify-content: space-between;
@@ -20,13 +21,13 @@
       padding-bottom: 1rem;
       border-bottom: 2px solid #e74c3c;
     }
-    
+
     .admin-title {
       color: #16e3fe;
       font-size: 2rem;
       font-weight: 700;
     }
-    
+
     .admin-stats {
       background: #f8f9fa;
       padding: 1rem;
@@ -34,41 +35,42 @@
       margin-bottom: 2rem;
       display: flex;
       gap: 2rem;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
-    
+
     .stat-item {
       text-align: center;
     }
-    
+
     .stat-number {
       font-size: 1.8rem;
       font-weight: bold;
       color: #e74c3c;
     }
-    
+
     .stat-label {
       font-size: 0.9rem;
       color: #7f8c8d;
     }
-    
+
     .admin-table-container {
-      background: white;
+      background: #1a252f;
+      /* Color oscuro que combina con el encabezado */
       border-radius: 10px;
       overflow: hidden;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     }
-    
+
     .admin-table {
       width: 100%;
       border-collapse: collapse;
     }
-    
+
     .admin-table thead {
       background: linear-gradient(135deg, #2c3e50, #34495e);
       color: white;
     }
-    
+
     .admin-table th {
       padding: 1rem;
       text-align: left;
@@ -77,54 +79,64 @@
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
-    
+
     .admin-table td {
       padding: 1rem;
-      border-bottom: 1px solid #ecf0f1;
+      border-bottom: 1px solid #2c3e50;
+      /* Líneas divisorias más oscuras */
+      color: #ecf0f1;
+      /* Texto claro para contraste */
     }
-    
+
     .admin-table tbody tr {
+      background: #1a252f;
       transition: all 0.3s ease;
     }
-    
+
     .admin-table tbody tr:hover {
-      background: #f8f9fa;
+      background: #2c3e50;
+      /* Color más claro al pasar el mouse */
       transform: translateY(-2px);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     }
-    
+
     .admin-table tbody tr:nth-child(even) {
-      background: #f8f9fa;
+      background: #1e2b37;
+      /* Color ligeramente diferente para filas pares */
     }
-    
+
     .admin-table tbody tr:nth-child(even):hover {
-      background: #e8f4f8;
+      background: #2c3e50;
+      /* Mismo hover para todas las filas */
     }
-    
+
     .user-email {
-      color: #3498db;
+      color: #16e3fe;
+      /* Usar el color azul claro del título */
       font-weight: 500;
     }
-    
+
     .user-id {
       font-family: 'Courier New', monospace;
-      background: #f1f2f6;
+      background: #2c3e50;
+      /* Fondo más oscuro para el ID */
       padding: 0.2rem 0.5rem;
       border-radius: 4px;
       font-weight: bold;
-      color: #2c3e50;
+      color: #ecf0f1;
+      /* Texto más claro */
     }
-    
+
     .user-date {
-      color: #8a8d7f;
+      color: #bdc3c7;
       font-size: 0.9rem;
     }
-    
+
     .action-buttons {
       display: flex;
       gap: 0.5rem;
     }
-    
+
     .btn-danger-admin {
       background: linear-gradient(135deg, #e74c3c, #c0392b);
       color: white;
@@ -136,13 +148,13 @@
       transition: all 0.3s ease;
       font-size: 0.85rem;
     }
-    
+
     .btn-danger-admin:hover {
       background: linear-gradient(135deg, #c0392b, #a93226);
       transform: translateY(-2px);
       box-shadow: 0 4px 8px rgba(231, 76, 60, 0.3);
     }
-    
+
     .btn-view {
       background: linear-gradient(135deg, #3498db, #2980b9);
       color: white;
@@ -156,12 +168,12 @@
       text-decoration: none;
       display: inline-block;
     }
-    
+
     .btn-view:hover {
       background: linear-gradient(135deg, #2980b9, #1f618d);
       transform: translateY(-2px);
     }
-    
+
     .admin-alert {
       background: #fff3cd;
       border: 1px solid #ffeaa7;
@@ -173,39 +185,40 @@
       align-items: center;
       gap: 1rem;
     }
-    
+
     .admin-alert-icon {
       font-size: 1.5rem;
     }
-    
+
     .no-users {
       text-align: center;
       padding: 3rem;
       color: #7f8c8d;
     }
-    
+
     .no-users-icon {
       font-size: 3rem;
       margin-bottom: 1rem;
       opacity: 0.5;
     }
-    
+
     /* Responsive */
     @media (max-width: 768px) {
       .admin-table-container {
         overflow-x: auto;
       }
-      
+
       .admin-table {
         min-width: 800px;
       }
-      
+
       .admin-stats {
         flex-wrap: wrap;
       }
     }
   </style>
 </head>
+
 <body>
   <header class="site-header">
     <div class="logo-area">
@@ -226,7 +239,7 @@
         <span>Administrador: <strong>{{ session.get('usuario_nombre', 'Admin') }}</strong></span>
       </div>
     </div>
-    
+
     <div class="admin-stats">
       <div class="stat-item">
         <div class="stat-number">Hoy</div>
@@ -236,9 +249,9 @@
         <div class="stat-number">{{ usuarios|length }}</div>
         <div class="stat-label">Usuarios Registrados</div>
       </div>
-      
+
     </div>
-    
+
     <div class="admin-table-container">
       {% if usuarios %}
       <table class="admin-table">
@@ -252,26 +265,28 @@
           </tr>
         </thead>
         <tbody>
-        {% for u in usuarios %}
+          {% for u in usuarios %}
           <tr>
             <td><span class="user-id">#{{ u.Usuario_ID }}</span></td>
             <td>
               <strong>{{ u.Nombre }}</strong>
               {% if u.Usuario_ID == 1 %}
-              <span style="background: #e74c3c; color: white; padding: 2px 6px; border-radius: 3px; font-size: 0.7rem; margin-left: 5px;">Admin</span>
+              <span
+                style="background: #e74c3c; color: white; padding: 2px 6px; border-radius: 3px; font-size: 0.7rem; margin-left: 5px;">Admin</span>
               {% endif %}
             </td>
             <td><span class="user-email">{{ u.Email }}</span></td>
             <td>
-              <span class="user-date">{{ u.FechaRegistro.strftime('%d/%m/%Y') if u.FechaRegistro else 'N/A' }}</span><br>
+              <span class="user-date">{{ u.FechaRegistro.strftime('%d/%m/%Y') if u.FechaRegistro else 'N/A'
+                }}</span><br>
               <small>{{ u.FechaRegistro.strftime('%H:%M') if u.FechaRegistro else '' }}</small>
             </td>
             <td>
               <div class="action-buttons">
                 {% if u.Usuario_ID != 1 %}
-                <form method="post" action="{{ url_for('admin_eliminar_usuario', usuario_id=u.Usuario_ID) }}" 
-                      onsubmit="return confirm('¿Eliminar usuario {{ u.Email }}?\\n\\nEsto eliminará:\\n• Todas sus rentas\\n• Todas sus tarjetas\\n\\nLos datos se archivarán en el historial.');" 
-                      style="display:inline;">
+                <form method="post" action="{{ url_for('admin_eliminar_usuario', usuario_id=u.Usuario_ID) }}"
+                  onsubmit="return confirm('¿Eliminar usuario {{ u.Email }}?\\n\\nEsto eliminará:\\n• Todas sus rentas\\n• Todas sus tarjetas\\n\\nLos datos se archivarán en el historial.');"
+                  style="display:inline;">
                   <button type="submit" class="btn-danger-admin">
                     🗑️ Eliminar
                   </button>
@@ -284,7 +299,7 @@
               </div>
             </td>
           </tr>
-        {% endfor %}
+          {% endfor %}
         </tbody>
       </table>
       {% else %}
@@ -295,9 +310,9 @@
       </div>
       {% endif %}
     </div>
-    
+
   </main>
-  
+
   <script>
     // Agregar fecha actual si no está en el contexto
     if (!document.querySelector('.user-date').textContent.includes('/')) {
@@ -305,11 +320,11 @@
       document.querySelectorAll('.stat-number')[2].textContent = now.toLocaleDateString('es-ES');
       document.querySelectorAll('.stat-label')[2].textContent = 'Fecha actual';
     }
-    
+
     // Mejorar la confirmación de eliminación
     document.querySelectorAll('form[onsubmit]').forEach(form => {
       const originalOnsubmit = form.onsubmit;
-      form.onsubmit = function(e) {
+      form.onsubmit = function (e) {
         const button = this.querySelector('button');
         if (button) {
           button.innerHTML = '⏳ Eliminando...';
@@ -319,13 +334,14 @@
         return originalOnsubmit.call(this, e);
       };
     });
-    
+
     // Efecto hover mejorado
     document.querySelectorAll('.admin-table tbody tr').forEach(row => {
-      row.addEventListener('mouseenter', function() {
+      row.addEventListener('mouseenter', function () {
         this.style.transition = 'all 0.3s ease';
       });
     });
   </script>
 </body>
+
 </html>
