@@ -398,7 +398,6 @@ def api_pelicula(movie_id):
 
     return jsonify({"pelicula": pelicula, "recomendadas": recomendadas})
 
-# Admin: listar usuarios y eliminar usuario
 @app.route("/admin/usuarios")
 def admin_users():
     usuario_actual = session.get("usuario_id")
@@ -412,6 +411,7 @@ def admin_users():
 
     # Obtener lista de usuarios
     from db import get_connection
+    from datetime import datetime
 
     conn = get_connection()
     cursor = conn.cursor()
@@ -434,7 +434,11 @@ def admin_users():
             }
         )
     conn.close()
-    return render_template("admin_users.html", usuarios=usuarios)
+    
+    # Pasar la fecha actual al template
+    now = datetime.now()
+    
+    return render_template("admin_users.html", usuarios=usuarios, now=now)
 
 
 @app.route("/admin/eliminar_usuario/<int:usuario_id>", methods=["POST"])
