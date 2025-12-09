@@ -233,12 +233,53 @@ def obtener_pelicula_por_id(movie_id):
     finally:
         conn.close()
 
+def obtener_generos():
+    conn = get_connection()
+    if not conn:
+        return []
+    
+    query = """
+    SELECT DISTINCT 
+        TRIM(value) as genero
+    FROM dbo.mymoviedb
+    CROSS APPLY STRING_SPLIT(Genre, ',')
+    WHERE TRIM(value) <> ''
+    ORDER BY TRIM(value);
+    """
+    
+    try:
+        cursor = conn.cursor()
+        cursor.execute(query)
+        rows = cursor.fetchall()
+        
+        generos = [row.genero.strip() for row in rows if row.genero and row.genero.strip()]
+        return generos
+    except Exception as e:
+        print(f"Error al obtener géneros: {e}")
+        try:
+            cursor.execute("""
+                SELECT TOP 100 Genre 
+                FROM dbo.mymoviedb 
+                WHERE Genre IS NOT NULL AND Genre <> ''
+                ORDER BY Genre
+            """)
+            rows = cursor.fetchall()
+            
+            generos_set = set()
+            for row in rows:
+                if row.Genre:
+                    generos = [g.strip() for g in row.Genre.split(',') if g.strip()]
+                    generos_set.update(generos)
+            
+            return sorted(list(generos_set))
+        except Exception as e2:
+            print(f"Error alternativo al obtener géneros: {e2}")
+            return []
+    finally:
+        conn.close()
+
 
 def obtener_recomendadas_por_genero(genero, movie_id_excluir = None, limit = 12):
-    """
-    Devuelve películas del mismo género (o que contengan ese género en el campo Genre),
-    ordenadas por popularidad, excluyendo opcionalmente una película concreta.
-    """
     conn = get_connection()
     if not conn:
         return []

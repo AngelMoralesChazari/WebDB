@@ -6,7 +6,6 @@
   <title>Admin - Usuarios</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
   <style>
-    /* Estilos específicos para panel de administración */
     .admin-container {
       padding: 2rem;
       max-width: 1200px;
@@ -55,7 +54,6 @@
 
     .admin-table-container {
       background: #1a252f;
-      /* Color oscuro que combina con el encabezado */
       border-radius: 10px;
       overflow: hidden;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
@@ -83,9 +81,7 @@
     .admin-table td {
       padding: 1rem;
       border-bottom: 1px solid #2c3e50;
-      /* Líneas divisorias más oscuras */
       color: #ecf0f1;
-      /* Texto claro para contraste */
     }
 
     .admin-table tbody tr {
@@ -95,36 +91,30 @@
 
     .admin-table tbody tr:hover {
       background: #2c3e50;
-      /* Color más claro al pasar el mouse */
       transform: translateY(-2px);
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     }
 
     .admin-table tbody tr:nth-child(even) {
       background: #1e2b37;
-      /* Color ligeramente diferente para filas pares */
     }
 
     .admin-table tbody tr:nth-child(even):hover {
       background: #2c3e50;
-      /* Mismo hover para todas las filas */
     }
 
     .user-email {
       color: #16e3fe;
-      /* Usar el color azul claro del título */
       font-weight: 500;
     }
 
     .user-id {
       font-family: 'Courier New', monospace;
       background: #2c3e50;
-      /* Fondo más oscuro para el ID */
       padding: 0.2rem 0.5rem;
       border-radius: 4px;
       font-weight: bold;
       color: #ecf0f1;
-      /* Texto más claro */
     }
 
     .user-date {

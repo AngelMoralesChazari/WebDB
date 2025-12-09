@@ -58,6 +58,14 @@
                     <label for="genero">Género</label>
                     <select id="genero" name="genero">
                         <option value="">Todos</option>
+                        {% if generos_disponibles %}
+                        {% for genero_item in generos_disponibles %}
+                        <option value="{{ genero_item }}" {% if genero_actual==genero_item %}selected{% endif %}>
+                            {{ genero_item }}
+                        </option>
+                        {% endfor %}
+                        {% else %}
+                        <!-- Géneros por defecto como respaldo -->
                         <option value="Action" {% if genero_actual=='Action' %}selected{% endif %}>Acción</option>
                         <option value="Adventure" {% if genero_actual=='Adventure' %}selected{% endif %}>Aventura
                         </option>
@@ -66,6 +74,7 @@
                         <option value="Horror" {% if genero_actual=='Horror' %}selected{% endif %}>Terror</option>
                         <option value="Animation" {% if genero_actual=='Animation' %}selected{% endif %}>Animación
                         </option>
+                        {% endif %}
                     </select>
                 </div>
 

@@ -31,6 +31,7 @@ from models import (
     obtener_tarjeta_por_id,
     eliminar_tarjeta as eliminar_tarjeta_model,
     tiene_tarjeta,
+    obtener_generos,
 )
 
 app = Flask(__name__)
@@ -143,6 +144,7 @@ def home():
     )
 
 # Películas (listado con paginación y filtros)
+# Películas (listado con paginación y filtros)
 @app.route("/peliculas")
 def peliculas():
     q = request.args.get("q", "").strip()
@@ -166,6 +168,9 @@ def peliculas():
 
     total_pages = (total_peliculas + per_page - 1) // per_page
 
+    # Obtener todos los géneros únicos
+    todos_generos = obtener_generos()
+
     return render_template(
         "Peliculas.html",
         peliculas=peliculas_list,
@@ -174,6 +179,7 @@ def peliculas():
         anio_actual=anio,
         page=page,
         total_pages=total_pages,
+        generos_disponibles=todos_generos  # <-- ¡Añade esto!
     )
 
 # Series (placeholder)
@@ -475,6 +481,8 @@ def admin_eliminar_usuario(usuario_id):
         flash("No se pudo eliminar el usuario. Revisa los logs.", "error")
     
     return redirect(url_for("admin_users"))
+
+
 
 if __name__ == "__main__":
     app.run(debug=True, host="127.0.0.1", port=8000)
