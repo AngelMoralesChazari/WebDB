@@ -84,7 +84,6 @@
             {% if peliculas %}
             <div class="movies-grid">
                 {% for peli in peliculas %}
-                <!-- Cada card lleva a la página de detalles -->
                 <a href="{{ url_for('detalle_pelicula', movie_id=peli.id) }}" class="movie-link">
                     <article class="movie-card-grid">
                         <div class="movie-poster-wrapper">
@@ -119,10 +118,9 @@
                 {% endfor %}
             </div>
 
-            <!-- PAGINACIÓN -->
             {% if total_pages > 1 %}
             <div class="pagination">
-                <!-- Botón Anterior -->
+
                 {% if page > 1 %}
                 <a href="{{ url_for('peliculas', q=q, genero=genero_actual, anio=anio_actual, page=page-1) }}"
                     class="pagination-btn pagination-prev">
@@ -132,7 +130,6 @@
                 <span class="pagination-btn pagination-disabled">← Anterior</span>
                 {% endif %}
 
-                <!-- Números de página -->
                 <div class="pagination-numbers">
                     {% set start_page = ((page - 1) // 10) * 10 + 1 %}
                     {% set end_page = [start_page + 9, total_pages] | min %}
@@ -149,7 +146,6 @@
                     {% endfor %}
                 </div>
 
-                <!-- Botón Siguiente -->
                 {% if page < total_pages %} <a
                     href="{{ url_for('peliculas', q=q, genero=genero_actual, anio=anio_actual, page=page|int + 1) }}"
                     class="pagination-btn pagination-next">
@@ -170,7 +166,6 @@
     </main>
 
     <script>
-        // Dropdown usuario
         document.addEventListener('click', function (e) {
             const toggle = document.querySelector('.user-menu-toggle');
             const dropdown = document.querySelector('.user-menu-dropdown');

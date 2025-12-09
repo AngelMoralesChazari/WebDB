@@ -22,8 +22,8 @@ def obtener_peliculas(busqueda = None, genero = None, anio = None, limit = 20, o
     params = []
 
     if busqueda:
-        query += " AND (Title LIKE ? OR Overview LIKE ?)"
-        params.extend([f"%{busqueda}%", f"%{busqueda}%"])
+        query += " AND Title LIKE ?"
+        params.append(f"%{busqueda}%")
 
     if genero:
         query += " AND Genre LIKE ?"
@@ -65,8 +65,9 @@ def contar_peliculas(busqueda=None, genero=None, anio=None):
     params = []
 
     if busqueda:
-        query += " AND (Title LIKE ? OR Overview LIKE ?)"
-        params.extend([f"%{busqueda}%", f"%{busqueda}%"])
+        # SOLO contar por Title, NO por Overview
+        query += " AND Title LIKE ?"
+        params.append(f"%{busqueda}%")
 
     if genero:
         query += " AND Genre LIKE ?"
@@ -360,7 +361,7 @@ def buscar_peliculas(texto = None, genero = None, anio = None, limit = 50):
         print("=== No se pudo obtener la conexión en buscar_peliculas ===")
         return []
 
-    # Construimos la consulta dinámica
+    # Consulta dinámica
     base_query = """
     SELECT TOP ({limit})
         Movie_ID,
@@ -379,19 +380,17 @@ def buscar_peliculas(texto = None, genero = None, anio = None, limit = 50):
 
     params = []
 
-    # Filtro por texto en título u overview
+    # Filtro por texto SOLO en título (NO en overview)
     if texto:
-        base_query += " AND (Title LIKE ? OR Overview LIKE ?)"
-        like_text = f"%{texto}%"
-        params.append(like_text)
-        params.append(like_text)
+        base_query += " AND Title LIKE ?"
+        params.append(f"%{texto}%")
 
-    # Filtro por género (contenga el género)
+    # Filtro por género 
     if genero:
         base_query += " AND Genre LIKE ?"
         params.append(f"%{genero}%")
 
-    # Filtro por año: comparamos con el año de Release_Date
+    # Filtro por año
     if anio:
         base_query += " AND YEAR(Release_Date) = ?"
         params.append(anio)
@@ -426,12 +425,7 @@ def buscar_peliculas(texto = None, genero = None, anio = None, limit = 50):
     return peliculas
 
 # === RENTAS ===
-
 def crear_renta(usuario_id, movie_id, dias=3, monto=None):
-    """
-    Crea un registro de renta y devuelve (True, renta_id) si todo OK,
-    o (False, None) en caso de error.
-    """
     from datetime import datetime, timedelta
 
     if dias < 1 or dias > 5:
@@ -480,13 +474,6 @@ def crear_renta(usuario_id, movie_id, dias=3, monto=None):
             pass
 
 def actualizar_estado_renta(renta_id, nuevo_estatus, usuario_id=None):
-    """
-    Actualiza el estado de una renta.
-    - renta_id: id de la renta a actualizar
-    - nuevo_estatus: string ("Devuelta", "Cancelada", etc.)
-    - usuario_id: opcional. Si se provee, se verifica que la renta pertenezca al usuario.
-    Retorna True si la actualización tuvo efecto, False si no (o en caso de error).
-    """
     conn = get_connection()
     if not conn:
         print("=== No se pudo obtener la conexión en actualizar_estado_renta ===")
@@ -508,7 +495,7 @@ def actualizar_estado_renta(renta_id, nuevo_estatus, usuario_id=None):
                 print(f"actualizar_estado_renta: renta {renta_id} no pertenece al usuario {usuario_id}")
                 return False
 
-        # Ejecutar la actualización dentro de una transacción
+        # Ejecutar la actualización 
         cursor.execute("BEGIN TRANSACTION;")
         cursor.execute("""
             UPDATE dbo.Rentas
@@ -518,7 +505,7 @@ def actualizar_estado_renta(renta_id, nuevo_estatus, usuario_id=None):
         affected = cursor.rowcount
 
         if affected == 0:
-            # No se actualizó ninguna fila (posible id inexistente)
+            # No se actualizó ninguna fila 
             cursor.execute("ROLLBACK;")
             print(f"actualizar_estado_renta: no se afectó ninguna fila para renta_id={renta_id}")
             return False
@@ -543,10 +530,6 @@ def actualizar_estado_renta(renta_id, nuevo_estatus, usuario_id=None):
 
 
 def obtener_rentas_por_usuario(usuario_id, filtro = None):
-    """
-    Devuelve las rentas de un usuario.
-    filtro puede ser: None, 'por_vencer', 'vencidas', 'devueltas'
-    """
     conn = get_connection()
     if not conn:
         print("=== No se pudo obtener la conexión en obtener_rentas_por_usuario ===")
@@ -621,10 +604,6 @@ def obtener_rentas_por_usuario(usuario_id, filtro = None):
     return rentas
 
 def tiene_renta_activa(usuario_id, movie_id):
-    """
-    Devuelve True si el usuario tiene una renta activa de esa película.
-    Para simplificar, consideramos activa si Estatus <> 'Completada' y <> 'Cancelada'.
-    """
     conn = get_connection()
     if not conn:
         print("=== No se pudo obtener la conexión en tiene_renta_activa ===")
@@ -649,10 +628,9 @@ def tiene_renta_activa(usuario_id, movie_id):
     finally:
         conn.close()
 
-def eliminar_usuario(usuario_id):
+def eliminar_usuario(usuario_id, eliminado_por_usuario_id=None, razon=None):
     """
-    Elimina un usuario y sus rentas asociadas dentro de una transacción.
-    Retorna True si se eliminó correctamente, False si hubo error o no existe.
+    Elimina un usuario moviendo sus datos a la tabla de usuarios eliminados primero.
     """
     conn = get_connection()
     if not conn:
@@ -661,41 +639,94 @@ def eliminar_usuario(usuario_id):
 
     try:
         cursor = conn.cursor()
-        # Iniciar transacción
         cursor.execute("BEGIN TRANSACTION;")
+        print(f"DEBUG eliminar_usuario: Transacción iniciada para usuario {usuario_id}")
 
-        # Comprobar existencia
-        cursor.execute("SELECT COUNT(*) FROM dbo.Usuarios WHERE Usuario_ID = ?", (usuario_id,))
-        if cursor.fetchone()[0] == 0:
+        # 1. Verificar si el usuario existe y obtener sus datos
+        cursor.execute("""
+            SELECT Usuario_ID, Nombre, Email, FechaRegistro 
+            FROM dbo.Usuarios 
+            WHERE Usuario_ID = ?
+        """, (usuario_id,))
+        
+        usuario_data = cursor.fetchone()
+        if not usuario_data:
             cursor.execute("ROLLBACK;")
-            print(f"eliminar_usuario: usuario {usuario_id} no existe")
+            print(f"DEBUG eliminar_usuario: usuario {usuario_id} no existe")
+            return False
+        
+        print(f"DEBUG eliminar_usuario: Usuario encontrado - ID: {usuario_data.Usuario_ID}, Email: {usuario_data.Email}")
+
+        # 2. Guardar en tabla de usuarios eliminados
+        print(f"DEBUG eliminar_usuario: Intentando insertar en Usuarios_Eliminados...")
+        cursor.execute("""
+            INSERT INTO dbo.Usuarios_Eliminados 
+            (Usuario_ID_Original, Nombre, Email, FechaRegistro_Original, 
+             FechaEliminacion, Razón, EliminadoPor_UsuarioID)
+            VALUES (?, ?, ?, ?, GETDATE(), ?, ?)
+        """, (
+            usuario_data.Usuario_ID,
+            usuario_data.Nombre,
+            usuario_data.Email,
+            usuario_data.FechaRegistro,
+            razon or "Eliminado por administrador",
+            eliminado_por_usuario_id
+        ))
+        
+        eliminado_id = None
+        cursor.execute("SELECT SCOPE_IDENTITY() AS id;")
+        row = cursor.fetchone()
+        if row:
+            eliminado_id = row[0]
+        
+        print(f"DEBUG eliminar_usuario: Usuario archivado en eliminados (ID: {eliminado_id})")
+
+        # 3. Eliminar tarjetas del usuario
+        cursor.execute("DELETE FROM dbo.Tarjetas WHERE Usuario_ID = ?", (usuario_id,))
+        tarjetas_eliminadas = cursor.rowcount
+        print(f"DEBUG eliminar_usuario: Tarjetas eliminadas: {tarjetas_eliminadas}")
+
+        # 4. Eliminar rentas del usuario
+        cursor.execute("DELETE FROM dbo.Rentas WHERE Usuario_ID = ?", (usuario_id,))
+        rentas_eliminadas = cursor.rowcount
+        print(f"DEBUG eliminar_usuario: Rentas eliminadas: {rentas_eliminadas}")
+
+        # 5. Finalmente eliminar el usuario
+        cursor.execute("DELETE FROM dbo.Usuarios WHERE Usuario_ID = ?", (usuario_id,))
+        usuarios_eliminados = cursor.rowcount
+        print(f"DEBUG eliminar_usuario: Usuarios eliminados de tabla principal: {usuarios_eliminados}")
+
+        # 6. Confirmar transacción
+        cursor.execute("COMMIT;")
+        conn.commit()
+        print(f"DEBUG eliminar_usuario: Transacción COMMIT exitosa para usuario {usuario_id}")
+        
+        if usuarios_eliminados > 0:
+            print(f">>> ÉXITO: Usuario {usuario_id} eliminado correctamente. Datos archivados en eliminados.")
+            return True
+        else:
+            print(f">>> ERROR: No se eliminó ningún usuario. Rollback realizado.")
+            cursor.execute("ROLLBACK;")
             return False
 
-        # Eliminar rentas asociadas (si prefieres conservar histórico cambia a soft-delete o reasignación)
-        cursor.execute("DELETE FROM dbo.Rentas WHERE Usuario_ID = ?", (usuario_id,))
-
-        # Eliminar el usuario
-        cursor.execute("DELETE FROM dbo.Usuarios WHERE Usuario_ID = ?", (usuario_id,))
-
-        conn.commit()
-        print(f">>> Usuario {usuario_id} y sus rentas eliminadas correctamente.")
-        return True
-
     except Exception as e:
-        print(f"Error en eliminar_usuario: {e}")
+        print(f"ERROR CRÍTICO en eliminar_usuario: {e}")
+        import traceback
+        traceback.print_exc()
         try:
-            conn.rollback()
+            cursor.execute("ROLLBACK;")
+            print("DEBUG eliminar_usuario: Rollback por excepción")
         except:
             pass
         return False
     finally:
         try:
             conn.close()
+            print("DEBUG eliminar_usuario: Conexión cerrada")
         except:
             pass
 
 def _tokenizar_numero(numero_tarjeta):
-    """Token simple (SHA256) para simular tokenización. NO es cifrado seguro para prod."""
     return hashlib.sha256(numero_tarjeta.encode('utf-8')).hexdigest()
 
 def _mask_last4(numero_tarjeta):
@@ -703,10 +734,6 @@ def _mask_last4(numero_tarjeta):
     return numero[-4:] if len(numero) >= 4 else numero
 
 def guardar_tarjeta(usuario_id, titular, numero_tarjeta, expiry_month, expiry_year, guardar=True):
-    """
-    Guarda una tarjeta (simulación). NO guarda CVV.
-    Retorna True si se guardó correctamente y el id de la tarjeta en caso de éxito.
-    """
     conn = get_connection()
     if not conn:
         print("=== No se pudo obtener conexión en guardar_tarjeta ===")

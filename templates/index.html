@@ -147,7 +147,7 @@
             }
 
             const carousel = document.getElementById(id);
-            const scrollAmount = 400; // píxeles a desplazar
+            const scrollAmount = 400; 
 
             if (direction === 'left') {
                 carousel.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
@@ -156,7 +156,6 @@
             }
         }
 
-        // === Menú de usuario (dropdown) ===
         document.addEventListener('click', function (e) {
             const toggle = document.querySelector('.user-menu-toggle');
             const dropdown = document.querySelector('.user-menu-dropdown');
@@ -164,11 +163,10 @@
             if (!toggle || !dropdown) return;
 
             if (toggle.contains(e.target)) {
-                // Click en el botón: alternar visibilidad
                 const isVisible = dropdown.style.display === 'block';
                 dropdown.style.display = isVisible ? 'none' : 'block';
+            
             } else if (!dropdown.contains(e.target)) {
-                // Click fuera del menú: cerrarlo
                 dropdown.style.display = 'none';
             }
         });

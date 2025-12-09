@@ -1,27 +1,29 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <title>Iniciar sesión | Pelis - UAGRO</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
+
 <body class="login-body">
-<header class="site-header">
-    <div class="logo-area">
-        <span class="logo-icon">🦅</span>
-        <span class="logo-text">Pelis - UAGRO</span>
-    </div>
+    <header class="site-header">
+        <div class="logo-area">
+            <span class="logo-icon">🦅</span>
+            <span class="logo-text">Pelis - UAGRO</span>
+        </div>
 
-    <nav class="main-nav">
-        <a href="{{ url_for('home') }}" class="nav-link">Inicio</a>
-        <a href="{{ url_for('peliculas') }}" class="nav-link">Películas</a>
-        <a href="{{ url_for('series') }}" class="nav-link">Series</a>
-        <a href="{{ url_for('cuenta') }}" class="nav-link">Mi cuenta</a>
-    </nav>
+        <nav class="main-nav">
+            <a href="{{ url_for('home') }}" class="nav-link">Inicio</a>
+            <a href="{{ url_for('peliculas') }}" class="nav-link">Películas</a>
+            <a href="{{ url_for('series') }}" class="nav-link">Series</a>
+            <a href="{{ url_for('cuenta') }}" class="nav-link">Mi cuenta</a>
+        </nav>
 
-    <div class="user-area">
-        {% if session.get('usuario_nombre') %}
+        <div class="user-area">
+            {% if session.get('usuario_nombre') %}
             {% set primer_nombre = session['usuario_nombre'].split(' ')[0] %}
             <div class="user-menu">
                 <button class="btn-login user-menu-toggle">
@@ -32,89 +34,88 @@
                     <a href="{{ url_for('logout') }}">Cerrar sesión</a>
                 </div>
             </div>
-        {% else %}
+            {% else %}
             <a href="{{ url_for('login') }}" class="btn-login">Iniciar sesión</a>
-        {% endif %}
-    </div>
-</header>
-
-<main class="main-content login-page">
-    <section class="login-panel">
-        <div class="login-panel-inner">
-            <h1 class="login-title">Iniciar Sesión</h1>
-            <p class="login-subtitle">Inicia sesión para seguir viendo tus películas.</p>
-
-            <!-- Mensajes flash -->
-            {% with messages = get_flashed_messages() %}
-                {% if messages %}
-                    <ul class="flash-messages">
-                        {% for msg in messages %}
-                            <li>{{ msg }}</li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            {% endwith %}
-
-            <div class="login-forms">
-                <!-- Formulario de login -->
-                <form method="post" action="{{ url_for('login_post') }}" class="card-form">
-                    <h2 class="card-title">Iniciar sesión</h2>
-
-                    <label class="form-field">
-                        <span>Correo electrónico</span>
-                        <input type="email" name="email" required>
-                    </label>
-
-                    <label class="form-field">
-                        <span>Contraseña</span>
-                        <input type="password" name="password" required>
-                    </label>
-
-                    <button type="submit" class="btn-primary btn-full">Entrar</button>
-                </form>
-
-                <!-- Formulario de registro -->
-                <form method="post" action="{{ url_for('registro') }}" class="card-form secondary-card">
-                    <h2 class="card-title">¿Nuevo aquí?</h2>
-                    <p class="card-text">Crea una cuenta para comenzar a disfrutar del catálogo.</p>
-
-                    <label class="form-field">
-                        <span>Nombre</span>
-                        <input type="text" name="nombre" required>
-                    </label>
-
-                    <label class="form-field">
-                        <span>Correo electrónico</span>
-                        <input type="email" name="email" required>
-                    </label>
-
-                    <label class="form-field">
-                        <span>Contraseña</span>
-                        <input type="password" name="password" required>
-                    </label>
-
-                    <button type="submit" class="btn-secondary btn-full">Crear cuenta</button>
-                </form>
-            </div>
+            {% endif %}
         </div>
-    </section>
-</main>
+    </header>
 
-<script>
-    // Dropdown del usuario, igual que en index
-    document.addEventListener('click', function (e) {
-        const toggle = document.querySelector('.user-menu-toggle');
-        const dropdown = document.querySelector('.user-menu-dropdown');
+    <main class="main-content login-page">
+        <section class="login-panel">
+            <div class="login-panel-inner">
+                <h1 class="login-title">Iniciar Sesión</h1>
+                <p class="login-subtitle">Inicia sesión para seguir viendo tus películas.</p>
 
-        if (!toggle || !dropdown) return;
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                <ul class="flashes">
+                    {% for category, message in messages %}
+                    <li class="flash-{{ category }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+                {% endwith %}
 
-        if (toggle.contains(e.target)) {
-            const isVisible = dropdown.style.display === 'block';
-            dropdown.style.display = isVisible ? 'none' : 'block';
-        } else if (!dropdown.contains(e.target)) {
-            dropdown.style.display = 'none';
-        }
-    });
-</script>
+                <div class="login-forms">
+                    <!-- Formulario de login -->
+                    <form method="post" action="{{ url_for('login_post') }}" class="card-form">
+                        <h2 class="card-title">Iniciar sesión</h2>
+
+                        <label class="form-field">
+                            <span>Correo electrónico</span>
+                            <input type="email" name="email" required>
+                        </label>
+
+                        <label class="form-field">
+                            <span>Contraseña</span>
+                            <input type="password" name="password" required>
+                        </label>
+
+                        <button type="submit" class="btn-primary btn-full">Entrar</button>
+                    </form>
+
+                    <!-- Formulario de registro -->
+                    <form method="post" action="{{ url_for('registro') }}" class="card-form secondary-card">
+                        <h2 class="card-title">¿Nuevo aquí?</h2>
+                        <p class="card-text">Crea una cuenta para comenzar a disfrutar del catálogo.</p>
+
+                        <label class="form-field">
+                            <span>Nombre</span>
+                            <input type="text" name="nombre" required>
+                        </label>
+
+                        <label class="form-field">
+                            <span>Correo electrónico</span>
+                            <input type="email" name="email" required>
+                        </label>
+
+                        <label class="form-field">
+                            <span>Contraseña</span>
+                            <input type="password" name="password" required>
+                        </label>
+
+                        <button type="submit" class="btn-secondary btn-full">Crear cuenta</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        document.addEventListener('click', function (e) {
+            const toggle = document.querySelector('.user-menu-toggle');
+            const dropdown = document.querySelector('.user-menu-dropdown');
+
+            if (!toggle || !dropdown) return;
+
+            if (toggle.contains(e.target)) {
+                const isVisible = dropdown.style.display === 'block';
+                dropdown.style.display = isVisible ? 'none' : 'block';
+            } else if (!dropdown.contains(e.target)) {
+                dropdown.style.display = 'none';
+            }
+        });
+    </script>
 </body>
+
 </html>

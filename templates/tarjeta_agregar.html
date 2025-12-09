@@ -64,7 +64,7 @@
               almacenamos CVV.</p>
           </form>
 
-          <!-- Lista de tarjetas guardadas (si existen) -->
+          <!-- Lista de tarjetas guardadas -->
           {% if tarjetas %}
           <h3 class="card-title" style="margin-top:18px;">Tarjetas guardadas</h3>
           <div class="saved-cards">
@@ -102,7 +102,7 @@
   </main>
 
   <script>
-    // Formato simple para el número de tarjeta (espaciado)
+    // Formato para el número de tarjeta 
     (function () {
       const input = document.getElementById('card-number');
       if (!input) return;
@@ -113,7 +113,7 @@
       });
     })();
 
-    // Mask en expiry (MM/YY)
+    // (MM/YY)
     (function () {
       const exp = document.getElementById('card-exp');
       if (!exp) return;

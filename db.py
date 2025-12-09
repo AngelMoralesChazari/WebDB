@@ -3,15 +3,28 @@ import pyodbc
 def get_connection():
     try:
         conn = pyodbc.connect(
-            'DRIVER={SQL Server};'
-            'SERVER=ANGEL;'
+            'DRIVER={SQL Server};'  # Driver VIEJO y RÁPIDO
+            'SERVER=ANGEL\\SQLEXPRESS;'  # ¡CON la instancia!
             'DATABASE=Movies;'
             'Trusted_Connection=yes;'
         )
         return conn
     except Exception as e:
         print(f"Error al conectar a la base de datos: {e}")
-        return None
+        
+        # Si falla, prueba sin la instancia
+        try:
+            conn = pyodbc.connect(
+                'DRIVER={SQL Server};'
+                'SERVER=ANGEL;'  # Sin instancia
+                'DATABASE=Movies;'
+                'Trusted_Connection=yes;'
+            )
+            print("✅ Conectado con ANGEL (sin instancia)")
+            return conn
+        except Exception as e2:
+            print(f"Error sin instancia: {e2}")
+            return None
 
 def obtener_peliculas_aleatorias(limit = 10):
     conn = get_connection()

@@ -67,22 +67,22 @@ def registro():
     password = request.form.get("password")
 
     if not nombre or not email or not password:
-        flash("Todos los campos son obligatorios.")
+        flash("Todos los campos son obligatorios.", "error")
         return redirect(url_for("login"))
 
     usuario_existente = obtener_usuario_por_email(email)
     if usuario_existente:
-        flash("Ese correo ya está registrado.")
+        flash("Ese correo ya está registrado.", "error")
         return redirect(url_for("login"))
 
     password_hash = generate_password_hash(password)
 
     exito = registrar_usuario(nombre, email, password_hash)
     if not exito:
-        flash("Ocurrió un error al registrar el usuario.")
+        flash("Ocurrió un error al registrar el usuario.", "error")
         return redirect(url_for("login"))
 
-    flash("Registro exitoso, ahora puedes iniciar sesión.")
+    flash("Registro exitoso, ahora puedes iniciar sesión.", "success")
     return redirect(url_for("login"))
 
 # Login (POST)
@@ -92,16 +92,16 @@ def login_post():
     password = request.form.get("password")
 
     if not email or not password:
-        flash("Debes ingresar correo y contraseña.")
+        flash("Debes ingresar correo y contraseña.", "error")
         return redirect(url_for("login"))
 
     usuario = obtener_usuario_por_email(email)
     if not usuario:
-        flash("Correo o contraseña incorrectos.")
+        flash("Correo o contraseña incorrectos.", "error")
         return redirect(url_for("login"))
 
     if not check_password_hash(usuario["password_hash"], password):
-        flash("Correo o contraseña incorrectos.")
+        flash("Correo o contraseña incorrectos.", "error")
         return redirect(url_for("login"))
 
     # Guardar usuario en sesión y aseguro que sea entero al guardar
@@ -115,7 +115,7 @@ def login_post():
     # Si es admin (id == 1)
     try:
         if int(usuario_id) == 1:
-            flash("Has iniciado sesión como administrador.")
+            flash("Has iniciado sesión como administrador.", "success")
             return redirect(url_for("admin_users"))
     except Exception:
         pass
@@ -444,19 +444,32 @@ def admin_eliminar_usuario(usuario_id):
         flash("Debes iniciar sesión para realizar esta acción.")
         return redirect(url_for("login"))
 
-    if int(usuario_actual) != 1:
+    try:
+        usuario_actual_int = int(usuario_actual)
+    except:
+        flash("Error en sesión de usuario.")
+        return redirect(url_for("login"))
+
+    if usuario_actual_int != 1:
         flash("No autorizado. Solo el administrador puede eliminar usuarios.")
         return redirect(url_for("cuenta"))
 
-    if usuario_id == usuario_actual:
+    if usuario_id == usuario_actual_int:
         flash("No puedes eliminar tu propia cuenta desde el panel de admin.")
         return redirect(url_for("admin_users"))
 
-    ok = eliminar_usuario(usuario_id)
+    print(f"DEBUG admin_eliminar_usuario: Intentando eliminar usuario {usuario_id} por admin {usuario_actual_int}")
+    
+    # Pasar el ID del admin que está haciendo la eliminación
+    ok = eliminar_usuario(usuario_id, 
+                         eliminado_por_usuario_id=usuario_actual_int, 
+                         razon="Eliminado desde panel de administración")
+    
     if ok:
-        flash(f"Usuario {usuario_id} eliminado correctamente.")
+        flash(f"Usuario {usuario_id} eliminado correctamente (datos archivados).", "success")
     else:
-        flash("No se pudo eliminar el usuario. Revisa los logs.")
+        flash("No se pudo eliminar el usuario. Revisa los logs.", "error")
+    
     return redirect(url_for("admin_users"))
 
 if __name__ == "__main__":

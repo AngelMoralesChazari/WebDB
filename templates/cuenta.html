@@ -101,7 +101,6 @@
             </p>
             {% endif %}
 
-            <!-- Mostrar botones solo si está activa -->
             {% if r.estatus in ['Activa', 'Por vencer'] %}
             <div style="margin-top: 0.75rem;">
               <form action="{{ url_for('devolver_renta', renta_id=r.renta_id) }}" method="post" style="display:inline;">
@@ -125,7 +124,7 @@
   </main>
 
   <script>
-    // Dropdown usuario (mismo código que en las otras páginas)
+    // Dropdown usuario
     document.addEventListener('click', function (e) {
       const toggle = document.querySelector('.user-menu-toggle');
       const dropdown = document.querySelector('.user-menu-dropdown');

@@ -2065,3 +2065,54 @@ body {
   filter: blur(2px) contrast(0.9);
   opacity: 0.95;
 }
+
+/* ESTILOS PARA MENSAJES FLASH */
+.flashes {
+    list-style: none;
+    margin: 0 0 1.5rem 0;
+    padding: 0;
+}
+
+.flashes li {
+    padding: 0.8rem 1rem;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    border: 1px solid transparent;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* Mensaje de éxito (verde) */
+.flash-success {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: #ffffff;
+    border-color: #047857;
+}
+
+/* Mensaje de error (rojo) */
+.flash-error {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: #ffffff;
+    border-color: #b91c1c;
+}
+
+/* Mensaje de advertencia (amarillo) */
+.flash-warning {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: #ffffff;
+    border-color: #b45309;
+}
+
+/* Mensaje de información (azul) */
+.flash-info {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: #ffffff;
+    border-color: #1d4ed8;
+}
+
+/* Mensaje genérico (gris) */
+.flash-message {
+    background: linear-gradient(135deg, #6b7280, #4b5563);
+    color: #ffffff;
+    border-color: #374151;
+}
